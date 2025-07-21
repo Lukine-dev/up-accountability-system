@@ -15,6 +15,10 @@
             <a href="{{ route('applications.pdf', $application->id) }}" class="btn text-white" style="background-color: #90143c;">
                 <i class="bi bi-file-earmark-pdf"></i> Download PDF
             </a>
+          <a href="{{ route('applications.downloadCSV', $application->id) }}" class="btn btn-success d-inline-flex align-items-center">
+                <i class="bi bi-file-earmark-spreadsheet me-1"></i> Download CSV
+            </a>
+
         </div>
     </div>
 

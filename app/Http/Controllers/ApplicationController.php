@@ -7,6 +7,7 @@ use App\Models\Equipment;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Response;
 
 class ApplicationController extends Controller
 {
@@ -201,4 +202,107 @@ class ApplicationController extends Controller
         return Pdf::loadView('pdf.accountability_form', compact('form', 'user', 'items'))
             ->download('Accountability_Form_' . $form->reference_number . '.pdf');
     }
+
+
+        public function downloadCSV($id)
+    {
+        $form = Application::with(['staff', 'equipments'])->findOrFail($id);
+        $user = $form->staff;
+
+        $filename = 'Accountability_Form_' . $form->reference_number . '.csv';
+
+        $headers = [
+            "Content-type" => "text/csv",
+            "Content-Disposition" => "attachment; filename=$filename",
+            "Pragma" => "no-cache",
+            "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
+            "Expires" => "0",
+        ];
+
+        $columns = ['Quantity', 'Name', 'Description', 'Model/Brand', 'Serial Number'];
+
+        $callback = function () use ($form, $columns) {
+            $file = fopen('php://output', 'w');
+
+            // Optional: Add header info
+            fputcsv($file, ['Reference Number:', $form->reference_number]);
+            fputcsv($file, ['Staff Name:', $form->staff->name]);
+            fputcsv($file, ['Department:', $form->staff->department]);
+            fputcsv($file, ['Designation:', $form->staff->designation]);
+            fputcsv($file, ['Date:', $form->created_at->format('Y-m-d')]);
+            fputcsv($file, []); // Blank line
+
+            // Add column headers
+            fputcsv($file, $columns);
+
+            // Add equipment rows
+            foreach ($form->equipments as $equipment) {
+                fputcsv($file, [
+                    $equipment->quantity,
+                    $equipment->name,
+                    $equipment->description ?? '-',
+                    $equipment->model_brand ?? '-',
+                    $equipment->serial_number ?? '-',
+                ]);
+            }
+
+            fclose($file);
+        };
+
+        return Response::stream($callback, 200, $headers);
+    }
+
+        public function downloadAllCSV()
+    {
+        $applications = Application::with(['staff', 'equipments'])->get();
+        $filename = 'All_Applications_Equipment_Summary.csv';
+
+        $headers = [
+            "Content-type" => "text/csv",
+            "Content-Disposition" => "attachment; filename=$filename",
+            "Pragma" => "no-cache",
+            "Cache-Control" => "must-revalidate, post-check=0, pre-check=0",
+            "Expires" => "0",
+        ];
+
+        $columns = [
+            'Reference Number',
+            'Application Date',
+            'Staff Name',
+            'Department',
+            'Designation',
+            'Equipment Name',
+            'Description',
+            'Model/Brand',
+            'Serial Number',
+            'Quantity',
+        ];
+
+        $callback = function () use ($applications, $columns) {
+            $file = fopen('php://output', 'w');
+            fputcsv($file, $columns);
+
+            foreach ($applications as $app) {
+                foreach ($app->equipments as $eq) {
+                    fputcsv($file, [
+                        $app->reference_number,
+                        $app->created_at->format('Y-m-d'),
+                        $app->staff->name ?? '-',
+                        $app->staff->department ?? '-',
+                        $app->staff->designation ?? '-',
+                        $eq->name,
+                        $eq->description ?? '-',
+                        $eq->model_brand ?? '-',
+                        $eq->serial_number ?? '-',
+                        $eq->quantity,
+                    ]);
+                }
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
 }

@@ -2,11 +2,17 @@
 
 @section('content')
 <div class="container mt-5">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="fw-bold mb-0" style="color: #90143c;">📋 ICT Accountability Forms</h2>
-        <a href="{{ route('applications.create') }}" class="btn text-white" style="background-color: #90143c;">
-            <i class="bi bi-plus-circle"></i> New Form
-        </a>
+   <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
+        <h2 class="fw-bold mb-0 text-maroon">📋 ICT Accountability Forms</h2>
+
+        <div class="d-flex gap-2 flex-wrap">
+            <a href="{{ route('applications.create') }}" class="btn text-white" style="background-color: #90143c;">
+                <i class="bi bi-plus-circle me-1"></i> New Form
+            </a>
+            <a href="{{ route('applications.downloadAllCSV') }}" class="btn btn-success d-inline-flex align-items-center">
+                <i class="bi bi-file-earmark-csv me-2"></i> Export All Applications CSV
+            </a>
+        </div>
     </div>
 
     {{-- Filter Toggle --}}
@@ -112,8 +118,11 @@
                                     <a href="{{ route('applications.edit', $application->id) }}" class="btn btn-sm btn-outline-warning me-1">
                                         <i class="bi bi-pencil-square"></i> Edit
                                     </a>
-                                    <a href="{{ route('applications.pdf', $application->id) }}" class="btn btn-sm btn-outline-secondary" target="_blank">
+                                    <a href="{{ route('applications.pdf', $application->id) }}" class="btn btn-sm btn-outline-danger" target="_blank">
                                         <i class="bi bi-printer"></i> PDF
+                                    </a>
+                                    <a href="{{ route('applications.downloadCSV', $application->id) }}" class="btn btn-sm btn-outline-success">
+                                        <i class="bi bi-file-earmark-spreadsheet me-1"></i> Download CSV
                                     </a>
                                 </td>
                             </tr>

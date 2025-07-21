@@ -5,25 +5,49 @@
     <meta charset="UTF-8">
     <title>ICT Device/Equipment Accountability Form</title>
     <style>
-        body { font-family: DejaVu Sans, sans-serif; font-size: 14px; margin: 40px; }
+        body { font-family: DejaVu Sans, sans-serif; font-size: 12px; margin: 20px; }
         h2 { text-align: center; margin-bottom: 20px; }
-        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
         td, th { border: 1px solid black; padding: 6px; vertical-align: top; }
         .no-border { border: none; }
         .signature{
             border-top: solid black 1px;
         }
+        h3,h4{
+            margin: 0;
+            padding: 0;
+        }
     </style>
+
 </head>
 <body>
+
+<header>
+<img src="{{ public_path('storage/upitdc_images/logo-2.png') }}" alt="Logo" style="height: 80px;">
+<h3><strong>UNIVERSITY OF THE PHILIPPINES</strong> </h3>
+<hr style="border: 1px solid black; margin: 0;">
+
+<table>
+       <tr>
+        <td style="border: none">  <h4 style="margin: 0;">OFFICE OF THE VICE PRESIDENT FOR DIGITAL TRANSFORMATION</h4></td>
+        <td style="border: none">  <img src="{{ public_path('storage/upitdc_images/OIP.webp') }}" alt="UPITDC-LOGO" style="height: 80px;"></td>
+    </tr>
+</table>
+  
+
+
+</header>
 
 <h2>ICT Device/Equipment Accountability Form</h2>
 
 <table>
-    <tr>
+       <tr>
         <td><strong>Reference Number:</strong> {{ $form->reference_number }}</td>
         <td><strong>Date:</strong> {{ \Carbon\Carbon::parse($form->created_date)->toFormattedDateString() }}</td>
     </tr>
+</table>
+ 
+<table>
     <tr>
         <td><strong>Name:</strong> {{ $user->name }}</td>
         <td><strong>Campus:</strong> {{ $user->system_office }}</td>
@@ -76,6 +100,7 @@
     </tr>
 </table>
 
+<hr style="border: 1px solid black; margin: 0;">
 <p><strong>This portion is to be accomplished by ITDC personnel.</strong></p>
 
 <table>

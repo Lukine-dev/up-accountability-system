@@ -24,7 +24,10 @@
                             <i class="bi bi-card-list"></i> View Full Profile
                         </a>
                         <a href="{{ route('staff.equipment.summary', $staff->id) }}" class="btn btn-sm btn-outline-danger" style="border-color: #90143c; color: #90143c;" target="_blank">
-                            <i class="bi bi-printer-fill"></i> Print Summary
+                            <i class="bi bi-printer-fill"></i> Print Summary (PDF)
+                        </a>
+                          <a href="{{ route('staff.downloadEquipmentCSV', $staff->id) }}" class="btn btn-outline-success btn-sm">
+                            <i class="bi bi-file-earmark-spreadsheet me-2"></i> Print Summary (CSV)
                         </a>
                     </div>
                 </div>

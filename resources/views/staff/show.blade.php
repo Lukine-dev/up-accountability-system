@@ -10,9 +10,15 @@
         <a href="{{ route('staff.index') }}" class="btn btn-outline-secondary btn-sm">
             <i class="bi bi-arrow-left"></i> Back to List
         </a>
-        <a href="{{ route('staff.equipment.summary', $staff->id) }}" class="btn btn-warning btn-sm" target="_blank">
+        <div>
+             <a href="{{ route('staff.equipment.summary', $staff->id) }}" class="btn btn-warning btn-sm" target="_blank">
             <i class="bi bi-printer"></i> Download Equipment Summary
         </a>
+        <a href="{{ route('staff.downloadEquipmentCSV', $staff->id) }}" class="btn btn-success btn-sm">
+        <i class="bi bi-file-earmark-spreadsheet me-2"></i> Download All Equipment (CSV)
+        </a>
+        </div>
+       
     </div>
 
     {{-- Staff Details --}}

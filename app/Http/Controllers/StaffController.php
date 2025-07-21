@@ -6,6 +6,7 @@ use App\Models\Staff;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Response;
 
 class StaffController extends Controller
 {
@@ -46,7 +47,7 @@ class StaffController extends Controller
     $query->orderBy($sortBy, $sortOrder);
 
     // Pagination with query persistence
-    $staffs = $query->paginate(9)->withQueryString();
+    $staffs = $query->paginate(10)->withQueryString();
 
     // Dropdown filters
     $offices = Staff::select('system_office')->distinct()->pluck('system_office');
@@ -117,17 +118,65 @@ class StaffController extends Controller
         return redirect()->route('staff.index')->with('success', 'Staff updated successfully');
     }
 
-    public function destroy(Staff $staff)
-    {
-        $staff->delete();
-        return redirect()->route('staff.index')->with('success', 'Staff deleted successfully');
-    }
+        public function destroy(Staff $staff)
+        {
+            $staff->delete();
+            return redirect()->route('staff.index')->with('success', 'Staff deleted successfully');
+        }
 
-        public function downloadStaffEquipmentSummary($id)
+            public function downloadStaffEquipmentSummary($id)
+        {
+            $staff = Staff::with('applications.equipments')->findOrFail($id);
+
+            $pdf = Pdf::loadView('pdf.staff_all_equipments', compact('staff'));
+            return $pdf->download('Staff_Equipment_Summary_' . $staff->name . '.pdf');
+        }
+
+        public function downloadStaffEquipmentCSV($id)
     {
         $staff = Staff::with('applications.equipments')->findOrFail($id);
+        $filename = 'Staff_Equipment_Summary_' . preg_replace('/\s+/', '_', $staff->name) . '.csv';
 
-        $pdf = Pdf::loadView('pdf.staff_all_equipments', compact('staff'));
-        return $pdf->download('Staff_Equipment_Summary_' . $staff->name . '.pdf');
+        $headers = [
+            "Content-Type" => "text/csv",
+            "Content-Disposition" => "attachment; filename=$filename",
+            "Pragma" => "no-cache",
+            "Cache-Control" => "must-revalidate",
+            "Expires" => "0",
+        ];
+
+        $columns = ['Reference Number', 'Date Issued', 'Quantity', 'Name', 'Description', 'Model/Brand', 'Serial Number'];
+
+        $callback = function () use ($staff, $columns) {
+            $file = fopen('php://output', 'w');
+
+            // Header Info
+            fputcsv($file, ['Staff Name:', $staff->name]);
+            fputcsv($file, ['Email:', $staff->email]);
+            fputcsv($file, ['Designation:', $staff->designation]);
+            fputcsv($file, ['Department:', $staff->department]);
+            fputcsv($file, ['System Office:', $staff->system_office]);
+            fputcsv($file, []); // blank line
+
+            fputcsv($file, $columns);
+
+            foreach ($staff->applications as $application) {
+                foreach ($application->equipments as $equipment) {
+                    fputcsv($file, [
+                        $application->reference_number,
+                        $application->created_at->format('Y-m-d'),
+                        $equipment->quantity,
+                        $equipment->name,
+                        $equipment->description ?? '-',
+                        $equipment->model_brand ?? '-',
+                        $equipment->serial_number ?? '-',
+                    ]);
+                }
+            }
+
+            fclose($file);
+        };
+
+        return Response::stream($callback, 200, $headers);
     }
 }

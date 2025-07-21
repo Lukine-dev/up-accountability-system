@@ -92,54 +92,48 @@
 
     {{-- Info Cards --}}
     <div class="row g-4 mb-4">
-        <div class="col-md-4">
-            <div class="card card-theme p-4 d-flex flex-row align-items-center">
-                <div class="icon-circle me-3">
-                    <i class="bi bi-people-fill"></i>
-                </div>
-                <div>
-                    <h6 class="mb-1">Total Staff</h6>
-                    <h4 class="mb-0">{{ $totalStaff }}</h4>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card card-theme p-4 d-flex flex-row align-items-center">
-                <div class="icon-circle me-3">
-                    <i class="bi bi-person-check-fill"></i>
-                </div>
-                <div>
-                    <h6 class="mb-1">Active Staff</h6>
-                    <h4 class="mb-0">{{ $activeStaff }}</h4>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card card-theme p-4 d-flex flex-row align-items-center">
-                <div class="icon-circle me-3">
-                    <i class="bi bi-person-dash-fill"></i>
-                </div>
-                <div>
-                    <h6 class="mb-1">Resigned Staff</h6>
-                    <h4 class="mb-0">{{ $resignedStaff }}</h4>
-                </div>
-            </div>
-        </div>
-    </div>
+                <!-- Total Staff Card -->
+                <div class="col-md-6">
+                    <div class="card card-theme p-4 d-flex flex-row align-items-center shadow-sm gap-3">
+                        <div class="icon-circle bg-maroon  me-3">
+                            <i class="bi bi-people-fill fs-4"></i>
+                        </div>
+                        <div>
+                            <h6 class="text-muted mb-1">Total Staff</h6>
+                            <h4 class="mb-0">{{ $totalStaff }}</h4>
+                        </div>
 
-    <div class="row g-4 mb-4">
-        <div class="col-md-6">
+                         <div class="icon-circle bg-success text-white me-3">
+                            <i class="bi bi-person-check-fill fs-4"></i>
+                        </div>
+                        <div>
+                            <h6 class="text-muted mb-1">Active Staff</h6>
+                            <h4 class="mb-0">{{ $activeStaff }}</h4>
+                        </div>
+                        <div class="icon-circle bg-danger text-white me-3">
+                            <i class="bi bi-person-dash-fill fs-4"></i>
+                        </div>
+                        <div>
+                            <h6 class="text-muted mb-1">Resigned Staff</h6>
+                            <h4 class="mb-0">{{ $resignedStaff }}</h4>
+                        </div>
+
+                    </div>
+                </div>
+            
+          <div class="col-md-3">
             <div class="card card-theme p-4 d-flex flex-row align-items-center">
                 <div class="icon-circle me-3">
                     <i class="bi bi-file-earmark-text-fill"></i>
                 </div>
                 <div>
-                    <h6 class="mb-1">Total Applications</h6>
+                    <h6 class="mb-1">Total Accountability Forms</h6>
                     <h4 class="mb-0">{{ $totalApplications }}</h4>
                 </div>
             </div>
         </div>
-        <div class="col-md-6">
+         
+        <div class="col-md-3">
             <div class="card card-theme p-4 d-flex flex-row align-items-center">
                 <div class="icon-circle me-3">
                     <i class="bi bi-box-arrow-up-right"></i>
@@ -155,7 +149,7 @@
     {{-- Quick Search --}}
     <h5 class="section-title">🔍 Quick Search</h5>
     <div class="row g-3 mb-5">
-        <div class="col-md-6">
+        <div class="col-md-4">
             <form method="GET" action="{{ route('staff.index') }}">
                 <div class="input-group">
                     <input type="text" name="search" class="form-control" placeholder="Search Staff by name/email...">
@@ -165,10 +159,20 @@
                 </div>
             </form>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-4">
             <form method="GET" action="{{ route('applications.index') }}">
                 <div class="input-group">
-                    <input type="text" name="search" class="form-control" placeholder="Search Application ref/user...">
+                    <input type="text" name="search" class="form-control" placeholder="Search Form reference number">
+                    <button class="btn btn-theme" type="submit">
+                        <i class="bi bi-search"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+         <div class="col-md-4">
+            <form method="GET" action="{{ route('equipment.index') }}">
+                <div class="input-group">
+                    <input type="text" name="search" class="form-control" placeholder="Search Equipment">
                     <button class="btn btn-theme" type="submit">
                         <i class="bi bi-search"></i>
                     </button>
@@ -187,17 +191,99 @@
         </div>
         <div class="col-md-4">
             <a href="{{ route('applications.index') }}" class="quick-link">
-                <i class="bi bi-journal-text"></i> View Applications
+                <i class="bi bi-journal-text"></i> View Accountability Forms
             </a>
         </div>
         <div class="col-md-4">
-            <a href="{{ route('monitor.issued_equipment') }}" class="quick-link">
+            <a href="{{ route('equipment.index') }}" class="quick-link">
                 <i class="bi bi-box-seam"></i> View Released Equipment
             </a>
         </div>
     </div>
+
+
+            {{-- Department Filter --}}
+        <div class="row g-3 mb-4">
+            <div class="col-md-6">
+                  <div class="card card-theme mb-3">
+                    <div class="card-header bg-theme d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">🧾 Recently Resigned Staff</h5>
+                        <select id="departmentFilter" class="form-select w-auto">
+                            <option value="">All Departments</option>
+                            @foreach($departments as $dept)
+                                <option value="{{ $dept }}">{{ $dept }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div id="resignedEmployeesTable">
+                        @include('partials.resigned-employees', ['employees' => $resignedEmployees])
+                    </div>
+                </div>     
+            </div>
+            
+             <div class="col-md-6">
+                  <div class="card card-theme mb-3">
+                    <div class="card-header bg-theme d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0"> <i class="bi bi-person-check-fill fs-4 me-1"></i> Recently Added Staff</h5>
+                        <select id="departmentFilter2" class="form-select w-auto">
+                            <option value="">All Departments</option>
+                            @foreach($departments as $dept)
+                                <option value="{{ $dept }}">{{ $dept }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div id="latestEmployeesTable">
+                        @include('partials.latest-employees', ['employees' => $latestEmployees])
+                    </div>
+                </div>     
+            </div>
+              
+        </div>
+          
+    </div>
 </div>
+
+
 
 {{-- Include Bootstrap Icons --}}
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const filter = document.getElementById('departmentFilter');
+        filter.addEventListener('change', function () {
+            const department = this.value;
+            fetch(`/resigned-employees?department=${department}`, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(res => res.text())
+            .then(html => {
+                document.getElementById('resignedEmployeesTable').innerHTML = html;
+            })
+            .catch(err => console.error('Error:', err));
+        });
+    });
+      document.addEventListener('DOMContentLoaded', function () {
+        const filter = document.getElementById('departmentFilter2');
+        filter.addEventListener('change', function () {
+            const department = this.value;
+            fetch(`/latest-employees?department=${department}`, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(res => res.text())
+            .then(html => {
+                document.getElementById('latestEmployeesTable').innerHTML = html;
+            })
+            .catch(err => console.error('Error:', err));
+        });
+    });
+</script>
+
 @endsection
