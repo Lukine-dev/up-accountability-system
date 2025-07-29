@@ -95,7 +95,7 @@
                 <!-- Total Staff Card -->
                 <div class="col-md-6">
                     <div class="card card-theme p-4 d-flex flex-row align-items-center shadow-sm gap-3">
-                        <div class="icon-circle bg-maroon  me-3">
+                        <div class="icon-circle bg-maroon text-white  me-3">
                             <i class="bi bi-people-fill fs-4"></i>
                         </div>
                         <div>
@@ -241,6 +241,37 @@
             </div>
               
         </div>
+
+                <div class="mt-5">
+            <h4>System Users</h4>
+            <div class="table-responsive">
+                <table class="table table-bordered table-sm table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th>#</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Registered At</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($users as $user)
+                            <tr>
+                                <td>{{ $loop->iteration }}</td>
+                                <td>{{ $user->name }}</td>
+                                <td>{{ $user->email }}</td>
+                                <td>{{ $user->created_at->format('Y-m-d H:i') }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+             <!-- Pagination Links -->
+            <div class="d-flex justify-content-center mt-3">
+                {{ $users->links('vendor.pagination.bootstrap-5') }}
+            </div>
+        </div>
+
           
     </div>
 </div>

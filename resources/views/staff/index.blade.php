@@ -123,7 +123,7 @@
                             <td class="d-flex flex-wrap gap-1">
                                 <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#editStaffModal{{ $staff->id }}">Edit</button>
                                 <a href="{{ route('staff.show', $staff->id) }}" class="btn btn-sm btn-outline-secondary">Show</a>
-                                {{-- <button class="btn btn-outline-info btn-sm" data-bs-toggle="modal" data-bs-target="#equipmentsModal{{ $staff->id }}">Equipments</button> --}}
+                                <button class="btn btn-outline-info btn-sm" data-bs-toggle="modal" data-bs-target="#equipmentsModal{{ $staff->id }}">Equipments</button>
                                 <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">Delete</button>
                             </td>
                         </tr>

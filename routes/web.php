@@ -36,7 +36,7 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('applications', ApplicationController::class);
    
 
-    
+
     Route::get('applications/{id}/pdf', [ApplicationController::class, 'downloadPDF'])->name('applications.pdf');
     Route::get('/applications/{id}/download-csv', [ApplicationController::class, 'downloadCSV'])->name('applications.downloadCSV');
     Route::get('/applications/download/all-csv', [ApplicationController::class, 'downloadAllCSV'])->name('applications.downloadAllCSV');
@@ -47,6 +47,10 @@ Route::middleware(['auth'])->group(function () {
         ->name('staff.equipment.summary');
 
     Route::get('/staff/{id}/download-equipment-csv', [StaffController::class, 'downloadStaffEquipmentCSV'])->name('staff.downloadEquipmentCSV');
+
+    // HISTORY LOGS
+    Route::get('/history', [App\Http\Controllers\UserController::class, 'history'])->name('history');
+
 });
 
 // Route::middleware(['auth', 'is_superadmin'])->group(function () {

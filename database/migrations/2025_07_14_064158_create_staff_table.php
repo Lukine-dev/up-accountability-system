@@ -18,7 +18,6 @@ return new class extends Migration
             $table->string('system_office');
             $table->string('designation');
             $table->string('department');
-            $table->string('password');
             $table->enum('status', ['active', 'resigned']);
             $table->timestamps();
         });

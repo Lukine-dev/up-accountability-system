@@ -105,6 +105,7 @@
                                     <a class="dropdown-item" href="{{ route('staff.index') }}">Staff Controls</a>
                                     <a class="dropdown-item" href="{{ route('applications.index') }}">Accountability Forms</a>
                                     <a class="dropdown-item" href="{{ route('equipment.index') }}">Equipment Issued</a>
+                                      <a class="dropdown-item" href="{{ route('history') }}">History Logs</a>
                                 </div>
                             </li>
 

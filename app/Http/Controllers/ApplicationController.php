@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Response;
+use App\Models\UserAction;
 
 class ApplicationController extends Controller
 {
@@ -98,6 +99,10 @@ class ApplicationController extends Controller
                 'quantity' => $equipmentData['quantity'],
             ]);
         }
+    
+    // Creation Log
+       UserAction::log('Created', 'Created a new accountability form for staff: ' . $application->staff->name, 'Accountability Form', $application->id);
+
 
         return redirect()->route('applications.index')
             ->with('success', 'Application submitted successfully!');
@@ -169,6 +174,9 @@ class ApplicationController extends Controller
 
     // Delete equipments not in the current form
     $application->equipments()->whereNotIn('id', $existingIds)->delete();
+        
+    // When updating
+    UserAction::log('Updated', 'Updated accountability form ID: ' . $application->id, 'Accountability Form', $application->id);
 
     return redirect()->route('applications.index')->with('success', 'Application updated successfully.');
 }
@@ -180,6 +188,9 @@ class ApplicationController extends Controller
         $application = Application::findOrFail($id);
         $application->equipments()->delete(); // changed from detach to delete for one-to-many
         $application->delete();
+
+        // When deleting
+        UserAction::log('Deleted', 'Deleted accountability form ID: ' . $application->id, 'Accountability Form', $application->id);
 
         return redirect()->route('applications.index')->with('success', 'Application deleted.');
     }
@@ -199,6 +210,14 @@ class ApplicationController extends Controller
             ];
         });
 
+    
+    //      // Log action
+    // UserAction::log(
+    //     'Exported',
+    //     'Downloaded PDF for accountability form.',
+    //     'Accountability Form',
+    //     $form->id
+    // );
         return Pdf::loadView('pdf.accountability_form', compact('form', 'user', 'items'))
             ->download('Accountability_Form_' . $form->reference_number . '.pdf');
     }
@@ -248,6 +267,14 @@ class ApplicationController extends Controller
 
             fclose($file);
         };
+
+        // // Log action
+        // UserAction::log(
+        //     'Exported',
+        //     'Downloaded CSV for accountability form.',
+        //     'Accountability Form',
+        //     $form->id
+        // );
 
         return Response::stream($callback, 200, $headers);
     }
@@ -302,7 +329,17 @@ class ApplicationController extends Controller
             fclose($file);
         };
 
+        // // Log action
+        // UserAction::log(
+        //     'Exported',
+        //     'Downloaded CSV for all accountability forms.',
+        //     'Accountability Form',
+        //     null
+        // );
+
         return response()->stream($callback, 200, $headers);
     }
+
+    
 
 }

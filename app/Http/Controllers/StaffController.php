@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Response;
+use App\Models\UserAction;
+
 
 class StaffController extends Controller
 {
@@ -71,7 +73,6 @@ class StaffController extends Controller
             'system_office' => 'required',
             'designation' => 'required',
             'department' => 'required',
-            'password' => 'required|min:6',
             'status' => 'required|in:active,resigned'
         ]);
 
@@ -81,9 +82,16 @@ class StaffController extends Controller
             'system_office' => $request->system_office,
             'designation' => $request->designation,
             'department' => $request->department,
-            'password' => Hash::make($request->password),
             'status' => $request->status
         ]);
+
+        // Log action
+                UserAction::log(
+            'Created',
+            'Created a new staff record: ' . $request->name,
+            'Staff',
+            null // No specific ID for creation, can be null or omitted
+        );
 
         return redirect()->route('staff.index')->with('success', 'Staff added successfully');
     }
@@ -115,12 +123,24 @@ class StaffController extends Controller
 
         $staff->update($request->only(['name', 'email', 'system_office', 'designation', 'department', 'status']));
 
+        // Log action
+        UserAction::log(
+            'Updated',
+            'Updated staff record: ' . $staff->name,
+            'Staff',
+            $staff->id
+        );
+
+
         return redirect()->route('staff.index')->with('success', 'Staff updated successfully');
     }
 
         public function destroy(Staff $staff)
         {
             $staff->delete();
+
+  
+
             return redirect()->route('staff.index')->with('success', 'Staff deleted successfully');
         }
 
@@ -129,6 +149,14 @@ class StaffController extends Controller
             $staff = Staff::with('applications.equipments')->findOrFail($id);
 
             $pdf = Pdf::loadView('pdf.staff_all_equipments', compact('staff'));
+
+              // Log action
+            UserAction::log(
+                'Deleted',
+                'Deleted staff record: ' . $staff->name,
+                'Staff',
+                $staff->id
+            );
             return $pdf->download('Staff_Equipment_Summary_' . $staff->name . '.pdf');
         }
 

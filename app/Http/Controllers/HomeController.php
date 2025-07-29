@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Staff;
 use App\Models\Application;
 use App\Models\Equipment;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
@@ -21,6 +22,7 @@ class HomeController extends Controller
                 'departments' => Staff::whereNotNull('department')->distinct()->pluck('department'),
                 'resignedEmployees' => Staff::where('status', 'resigned')->latest('updated_at')->take(10)->get(),
                 'latestEmployees' => Staff::where('status', 'active')->latest('created_at')->take(10)->get(),
+                'users' => User::latest()->paginate(10),
             ]);
         }
                 public function filterResigned(Request $request)

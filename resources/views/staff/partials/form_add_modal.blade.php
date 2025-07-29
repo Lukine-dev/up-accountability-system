@@ -36,10 +36,6 @@
               <label for="department">Department / Unit</label>
             </div>
             <div class="col-md-6 form-floating">
-              <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
-              <label for="password">Password</label>
-            </div>
-            <div class="col-md-6 form-floating">
               <select class="form-select" id="status" name="status" required>
                 <option value="" disabled selected>Choose...</option>
                 <option value="active">Active</option>

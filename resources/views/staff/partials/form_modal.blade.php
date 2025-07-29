@@ -34,12 +34,6 @@
               <input type="text" class="form-control" id="department" name="department" value="{{ $staff->department ?? '' }}" placeholder="Department">
               <label for="department">Department / Unit</label>
             </div>
-            @if(!isset($staff))
-            <div class="col-md-6 form-floating">
-              <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
-              <label for="password">Password</label>
-            </div>
-            @endif
             <div class="col-md-6 form-floating">
               <select class="form-select" id="status" name="status" required>
                   <option value="" disabled {{ !isset($staff) ? 'selected' : '' }}>Choose...</option>

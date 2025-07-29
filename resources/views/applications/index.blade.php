@@ -107,6 +107,7 @@
                     </thead>
                     <tbody>
                         @forelse ($applications as $application)
+                               @include('partials.confirm_modal', ['deleteRoute' => route('applications.destroy', $application->id)])
                             <tr>
                                 <td class="fw-medium">{{ $application->reference_number }}</td>
                                 <td>{{ $application->staff->name }}</td>
@@ -124,6 +125,7 @@
                                     <a href="{{ route('applications.downloadCSV', $application->id) }}" class="btn btn-sm btn-outline-success">
                                         <i class="bi bi-file-earmark-spreadsheet me-1"></i> Download CSV
                                     </a>
+                                   <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">Delete</button>
                                 </td>
                             </tr>
                         @empty

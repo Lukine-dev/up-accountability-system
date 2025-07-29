@@ -7,6 +7,7 @@ use Illuminate\Support\Str;
 use Illuminate\Pagination\LengthAwarePaginator;
 use App\Models\Application;
 use Illuminate\Support\Facades\Response;
+use App\Models\UserAction;
 
 class EquipmentController extends Controller
 {
