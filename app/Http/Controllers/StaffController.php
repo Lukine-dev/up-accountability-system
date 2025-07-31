@@ -173,7 +173,7 @@ class StaffController extends Controller
             "Expires" => "0",
         ];
 
-        $columns = ['Reference Number', 'Date Issued', 'Quantity', 'Name', 'Description', 'Model/Brand', 'Serial Number'];
+        $columns = ['Reference Number', 'Date Issued', 'Quantity', 'Description', 'Model/Brand', 'Serial Number'];
 
         $callback = function () use ($staff, $columns) {
             $file = fopen('php://output', 'w');
@@ -195,7 +195,6 @@ class StaffController extends Controller
                         $application->created_at->format('Y-m-d'),
                         $equipment->quantity,
                         $equipment->name,
-                        $equipment->description ?? '-',
                         $equipment->model_brand ?? '-',
                         $equipment->serial_number ?? '-',
                     ]);

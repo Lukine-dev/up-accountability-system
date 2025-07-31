@@ -12,7 +12,6 @@ return new class extends Migration
             $table->id();
             $table->foreignId('application_id')->constrained('applications')->onDelete('cascade');
             $table->string('name');
-            $table->text('description')->nullable();
             $table->string('model_brand')->nullable();
             $table->string('serial_number')->nullable();
             $table->integer('quantity');

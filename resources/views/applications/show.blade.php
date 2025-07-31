@@ -54,7 +54,6 @@
                     <table class="table table-striped table-bordered align-middle">
                         <thead class="table-light text-center">
                             <tr>
-                                <th>Name</th>
                                 <th>Quantity</th>
                                 <th>Description</th>
                                 <th>Model/Brand</th>
@@ -64,9 +63,8 @@
                         <tbody>
                             @foreach($application->equipments as $equipment)
                                 <tr class="text-center">
-                                    <td>{{ $equipment->name }}</td>
                                     <td>{{ $equipment->quantity }}</td>
-                                    <td>{{ $equipment->description ?? '-' }}</td>
+                                    <td>{{ $equipment->name }}</td>
                                     <td>{{ $equipment->model_brand ?? '-' }}</td>
                                     <td>{{ $equipment->serial_number ?? '-' }}</td>
                                 </tr>

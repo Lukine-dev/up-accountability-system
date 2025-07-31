@@ -115,7 +115,7 @@ class EquipmentController extends Controller
                     'Department' => $app->staff->department,
                     'System Office' => $app->staff->system_office,
                     'Equipment Name' => $eq->name,
-                    'Description' => $eq->description ?? '-',
+
                     'Model/Brand' => $eq->model_brand ?? '-',
                     'Serial Number' => $eq->serial_number ?? '-',
                     'Quantity' => $eq->quantity,

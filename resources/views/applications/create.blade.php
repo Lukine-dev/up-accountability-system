@@ -65,7 +65,6 @@
                     <table class="table table-bordered m-0" id="equipments-table">
                         <thead class="table-light">
                             <tr>
-                                <th>Name</th>
                                 <th>Description</th>
                                 <th>Model/Brand</th>
                                 <th>Serial Number</th>
@@ -75,8 +74,7 @@
                         </thead>
                         <tbody>
                             <tr>
-                                <td><input type="text" class="form-control" name="equipments[0][name]" required></td>
-                                <td><input type="text" class="form-control" name="equipments[0][description]"></td>
+                                <td><input type="text" class="form-control name-field" name="equipments[0][name]" required oninput="syncDescription(this)"></td>
                                 <td><input type="text" class="form-control" name="equipments[0][model_brand]"></td>
                                 <td><input type="text" class="form-control" name="equipments[0][serial_number]"></td>
                                 <td><input type="number" class="form-control" name="equipments[0][quantity]" required min="1"></td>
@@ -118,8 +116,7 @@
         const row = document.createElement('tr');
 
         row.innerHTML = `
-            <td><input type="text" class="form-control" name="equipments[${rowCount}][name]" required></td>
-            <td><input type="text" class="form-control" name="equipments[${rowCount}][description]"></td>
+            <td><input type="text" class="form-control name-field" name="equipments[${rowCount}][name]" required oninput="syncDescription(this)"></td>
             <td><input type="text" class="form-control" name="equipments[${rowCount}][model_brand]"></td>
             <td><input type="text" class="form-control" name="equipments[${rowCount}][serial_number]"></td>
             <td><input type="number" class="form-control" name="equipments[${rowCount}][quantity]" required min="1"></td>
@@ -134,6 +131,15 @@
 
     function removeRow(button) {
         button.closest('tr').remove();
+    }
+
+    // Automatically sync the description field with the name field
+    function syncDescription(input) {
+        const row = input.closest('tr');
+        const description = row.querySelector('.description-field');
+        if (description) {
+            description.value = input.value;
+        }
     }
 </script>
 @endsection

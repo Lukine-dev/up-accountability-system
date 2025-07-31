@@ -36,11 +36,9 @@
                 @foreach($application->equipments as $index => $equipment)
                     <div class="row mb-2 align-items-center">
                         <div class="col-md-3">
-                            <input type="text" name="equipments[{{ $index }}][name]" class="form-control" value="{{ $equipment->name }}" placeholder="Name">
+                            <input type="text" name="equipments[{{ $index }}][name]" class="form-control" value="{{ $equipment->name }}" placeholder="Description">
                         </div>
-                        <div class="col-md-2">
-                            <input type="text" name="equipments[{{ $index }}][description]" class="form-control" value="{{ $equipment->description }}" placeholder="Description">
-                        </div>
+        
                         <div class="col-md-2">
                             <input type="text" name="equipments[{{ $index }}][model_brand]" class="form-control" value="{{ $equipment->model_brand }}" placeholder="Model/Brand">
                         </div>
@@ -80,10 +78,7 @@
 
         row.innerHTML = `
             <div class="col-md-3">
-                <input type="text" name="equipments[${editRowCount}][name]" class="form-control" placeholder="Name">
-            </div>
-            <div class="col-md-2">
-                <input type="text" name="equipments[${editRowCount}][description]" class="form-control" placeholder="Description">
+                <input type="text" name="equipments[${editRowCount}][name]" class="form-control" placeholder="Description">
             </div>
             <div class="col-md-2">
                 <input type="text" name="equipments[${editRowCount}][model_brand]" class="form-control" placeholder="Model/Brand">

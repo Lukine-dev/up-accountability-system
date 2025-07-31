@@ -10,6 +10,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Response;
 use App\Models\UserAction;
 
+
 class ApplicationController extends Controller
 {
    public function index(Request $request)
@@ -93,7 +94,7 @@ class ApplicationController extends Controller
         foreach ($request->equipments as $equipmentData) {
             $application->equipments()->create([
                 'name' => $equipmentData['name'],
-                'description' => $equipmentData['description'] ?? null,
+       
                 'model_brand' => $equipmentData['model_brand'] ?? null,
                 'serial_number' => $equipmentData['serial_number'] ?? null,
                 'quantity' => $equipmentData['quantity'],
@@ -152,7 +153,7 @@ class ApplicationController extends Controller
             if ($equipment) {
                 $equipment->update([
                     'name' => $equipmentData['name'],
-                    'description' => $equipmentData['description'] ?? null,
+              
                     'model_brand' => $equipmentData['model_brand'] ?? null,
                     'serial_number' => $equipmentData['serial_number'] ?? null,
                     'quantity' => $equipmentData['quantity'],
@@ -163,7 +164,7 @@ class ApplicationController extends Controller
             // Create new equipment
             $newEquipment = $application->equipments()->create([
                 'name' => $equipmentData['name'],
-                'description' => $equipmentData['description'] ?? null,
+              
                 'model_brand' => $equipmentData['model_brand'] ?? null,
                 'serial_number' => $equipmentData['serial_number'] ?? null,
                 'quantity' => $equipmentData['quantity'],
@@ -204,7 +205,7 @@ class ApplicationController extends Controller
             return (object) [
                 'quantity' => $equipment->quantity,
                 'name' => $equipment->name,
-                'description' => $equipment->description ?? '-',
+        
                 'model_brand' => $equipment->model_brand ?? '-',
                 'serial_number' => $equipment->serial_number ?? '-',
             ];
@@ -238,7 +239,7 @@ class ApplicationController extends Controller
             "Expires" => "0",
         ];
 
-        $columns = ['Quantity', 'Name', 'Description', 'Model/Brand', 'Serial Number'];
+        $columns = ['Quantity', 'Description', 'Model/Brand', 'Serial Number'];
 
         $callback = function () use ($form, $columns) {
             $file = fopen('php://output', 'w');
@@ -259,7 +260,7 @@ class ApplicationController extends Controller
                 fputcsv($file, [
                     $equipment->quantity,
                     $equipment->name,
-                    $equipment->description ?? '-',
+
                     $equipment->model_brand ?? '-',
                     $equipment->serial_number ?? '-',
                 ]);
@@ -298,7 +299,6 @@ class ApplicationController extends Controller
             'Staff Name',
             'Department',
             'Designation',
-            'Equipment Name',
             'Description',
             'Model/Brand',
             'Serial Number',
@@ -318,7 +318,7 @@ class ApplicationController extends Controller
                         $app->staff->department ?? '-',
                         $app->staff->designation ?? '-',
                         $eq->name,
-                        $eq->description ?? '-',
+
                         $eq->model_brand ?? '-',
                         $eq->serial_number ?? '-',
                         $eq->quantity,

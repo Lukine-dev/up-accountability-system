@@ -17,6 +17,10 @@
             margin: 0;
             padding: 0;
         }
+        .name{
+            text-align: center;
+            font-weight: bold;
+        }
     </style>
 
 </head>
@@ -30,7 +34,7 @@
 <table>
        <tr>
         <td style="border: none">  <h4 style="margin: 0;">OFFICE OF THE VICE PRESIDENT FOR DIGITAL TRANSFORMATION</h4></td>
-        <td style="border: none">  <img src="{{ public_path('storage/upitdc_images/OIP.webp') }}" alt="UPITDC-LOGO" style="height: 80px;"></td>
+        <td style="border: none">  <img src="{{ public_path('storage/upitdc_images/OIP.jfif') }}" alt="UPITDC-LOGO" style="height: 100px;"></td>
     </tr>
 </table>
   
@@ -62,7 +66,6 @@
     <thead>
         <tr>
             <th>Quantity</th>
-            <th>Equipment Name</th>
             <th>Description</th>
             <th>Model/Brand</th>
             <th>Serial Number</th>
@@ -73,7 +76,6 @@
             <tr>
                 <td style="text-align: center">{{ $item->quantity }}</td>
                 <td style="text-align: center">{{ $item->name }}</td>
-                <td style="text-align: center">{{ $item->description }}</td>
                 <td style="text-align: center">{{ $item->model_brand }}</td>
                 <td style="text-align: center">{{ $item->serial_number }}</td>       
             </tr>
@@ -92,9 +94,11 @@
         <td style="border: none">Received By:<br><br><br>
             <div class="signature" > Signature over Printed Name </div>
             <br>Received Date:</td>
-         <td style="border: none">Prepared and Issued By:<br><br><br>
+         <td style="border: none">Prepared and Issued By:<br><br>
+            <div class="name">{{ auth()->user()->name ?? 'Signature over Printed Name' }}</div>
             <div class="signature">Signature over Printed Name </div>
-            <br>Issuance Approved By:<br><br><br>
+            <br>Issuance Approved By:<br><br>
+            <div class="name">Jason R. Balais</div>
             <div class="signature">Signature over Printed Name </div>
             <br><br></td>
     </tr>

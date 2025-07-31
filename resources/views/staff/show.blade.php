@@ -54,9 +54,15 @@
         <div class="card-body">
             @forelse ($staff->applications as $application)
                 <div class="border rounded p-3 mb-4 shadow-sm">
-                    <div class="mb-2">
-                        <strong>Ref #:</strong> {{ $application->reference_number }} |
-                        <strong>Date:</strong> {{ \Carbon\Carbon::parse($application->application_date)->format('F d, Y') }}
+                    <div class="mb-2 justify-content-between align-items-center d-flex">
+    
+                        <div>
+                            <strong>Ref #:</strong> {{ $application->reference_number }} |
+                             <strong>Date:</strong> {{ \Carbon\Carbon::parse($application->application_date)->format('F d, Y') }}
+                        </div>
+                         <a href="{{ route('applications.show', $application->id) }}" class="btn btn-sm btn-outline-info me-1 px-2">
+                                        <i class="bi bi-eye"></i> View
+                                    </a>
                     </div>
                     <ul class="list-group list-group-flush">
                         @foreach ($application->equipments as $equipment)
