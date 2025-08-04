@@ -5,24 +5,62 @@
     <meta charset="UTF-8">
     <title>ICT Device/Equipment Accountability Form</title>
     <style>
-        body { font-family: DejaVu Sans, sans-serif; font-size: 12px; margin: 20px; }
-        h2 { text-align: center; margin-bottom: 20px; }
-        table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
-        td, th { border: 1px solid black; padding: 6px; vertical-align: top; }
-        .no-border { border: none; }
-        .signature{
+            @page {
+            margin: 40px;
+            size: A4 portrait;
+        }
+
+        footer {
+            position: fixed;
+            bottom: -30px;
+            left: 0px;
+            right: 0px;
+            height: 70px;
+            font-size: 10px;
+            line-height: 15px;
+            text-align: center;
+        }
+
+        body {
+            font-family: DejaVu Sans, sans-serif;
+            font-size: 12px;
+        }
+
+        h2 {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 10px;
+            page-break-inside: avoid;
+        }
+
+        td, th {
+            border: 1px solid black;
+            padding: 6px;
+            vertical-align: top;
+        }
+
+        .no-border {
+            border: none;
+        }
+
+        .signature {
             border-top: solid black 1px;
         }
-        h3,h4{
-            margin: 0;
-            padding: 0;
-        }
-        .name{
+
+        .name {
             text-align: center;
             font-weight: bold;
         }
-    </style>
 
+        .section-break {
+            page-break-before: always;
+        }
+    </style>
 </head>
 <body>
 
@@ -41,6 +79,23 @@
 
 
 </header>
+<footer>
+    2/F Vidal A. Tan Hall, Quirino Ave. cor. Velasquez St.<br>
+    University of the Philippines, Diliman, Quezon City<br>
+    Tel: (+63) 028 376 3100, (+63) 028 920 2080 | Telefax: (+63) 02 920 2036 | Website: itdc.up.edu.ph
+
+    <script type="text/php">
+        if (isset($pdf)) {
+            $pdf->page_script('
+                $font = $fontMetrics->get_font("DejaVu Sans", "normal");
+                $pdf->text(520, 810, "Page $PAGE_NUM of $PAGE_COUNT", $font, 10);
+            ');
+        }
+    </script>
+</footer>
+
+<main>
+  
 
 <h2>ICT Device/Equipment Accountability Form</h2>
 
@@ -120,13 +175,8 @@
     </tr>
 </table>
 
-<p style="font-size: 10px; margin-top: 30px;">
-    2/F Vidal A. Tan Hall, Quirino Ave. cor. Velasquez St.<br>
-    University of the Philippines, Diliman, Quezon City<br>
-    Tel: (+63) 028 376 3100, (+63) 028 920 2080<br>
-    Telefax: (+63) 02 920 2036<br>
-    Website: itdc.up.edu.ph
-</p>
+</main>
 
 </body>
 </html>
+

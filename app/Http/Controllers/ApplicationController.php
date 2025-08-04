@@ -218,10 +218,13 @@ class ApplicationController extends Controller
     //     'Downloaded PDF for accountability form.',
     //     'Accountability Form',
     //     $form->id
-    // );
-        return Pdf::loadView('pdf.accountability_form', compact('form', 'user', 'items'))
-            ->download('Accountability_Form_' . $form->reference_number . '.pdf');
-    }
+            // );
+        $pdf = Pdf::loadView('pdf.accountability_form', compact('form', 'user', 'items'))
+                    ->setPaper('a4', 'portrait'); // A4 size, portrait orientation
+
+            return $pdf->download('ICT_Accountability_Form.pdf');
+        }
+    
 
 
         public function downloadCSV($id)

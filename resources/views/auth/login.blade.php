@@ -7,6 +7,11 @@
         --theme-light: #fce6ec;
     }
 
+        html, body {
+        height: 100%;
+        overflow: hidden;
+    }
+    
     .bg-theme {
         background-color: var(--theme-color);
         color: white;
@@ -30,9 +35,18 @@
     .btn-theme:hover {
         background-color: #7b0f32;
     }
+
+    .toast-error {
+        background-color: #ffcdd2;
+        color: #b71c1c;
+        padding: 10px 15px;
+        border-radius: 8px;
+        margin-bottom: 15px;
+        border-left: 6px solid #b71c1c;
+    }
 </style>
 
-<div class="container d-flex justify-content-center align-items-center" style="min-height: 80vh;">
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 90vh;">
     <div class="col-md-6">
         <div class="card shadow-lg border-0 rounded-4">
             <div class="card-header bg-theme text-center rounded-top-4">
@@ -40,6 +54,19 @@
             </div>
 
             <div class="card-body px-5 py-4">
+
+                {{-- Real-Time Clock and Location --}}
+                <div id="timeLocation" class="text-center mb-3 text-muted" style="font-size: 0.95rem;">
+                    Loading time and location...
+                </div>
+
+                {{-- Global Error Toast --}}
+                @if (session('error'))
+                    <div class="toast-error">
+                        <strong>Error:</strong> {{ session('error') }}
+                    </div>
+                @endif
+
                 <form method="POST" action="{{ route('login') }}">
                     @csrf
 
@@ -51,7 +78,7 @@
                             name="email" value="{{ old('email') }}" required autofocus>
 
                         @error('email')
-                            <div class="invalid-feedback">
+                            <div class="invalid-feedback d-block toast-error">
                                 {{ $message }}
                             </div>
                         @enderror
@@ -65,7 +92,7 @@
                             name="password" required>
 
                         @error('password')
-                            <div class="invalid-feedback">
+                            <div class="invalid-feedback d-block toast-error">
                                 {{ $message }}
                             </div>
                         @enderror
@@ -97,4 +124,23 @@
         </div>
     </div>
 </div>
+
+{{-- Clock & Location Script --}}
+<script>
+    function updateClockLocation() {
+        const now = new Date();
+        const options = {
+            weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
+            hour: '2-digit', minute: '2-digit', second: '2-digit',
+            hour12: false,
+            timeZone: 'Asia/Manila'
+        };
+        const formatted = now.toLocaleString('en-PH', options);
+        const location = '📍 Quezon City, Philippines';
+        document.getElementById('timeLocation').textContent = `${formatted} • ${location}`;
+    }
+
+    setInterval(updateClockLocation, 1000);
+    updateClockLocation();
+</script>
 @endsection

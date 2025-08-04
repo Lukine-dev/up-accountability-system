@@ -17,7 +17,6 @@ class StaffFactory extends Factory
             'system_office' => $this->faker->company,
             'designation' => $this->faker->jobTitle,
             'department' => $this->faker->word,
-            'password' => bcrypt('password'), // Or use Hash::make()
             'status' => $this->faker->randomElement(['active', 'resigned']),
         ];
     }

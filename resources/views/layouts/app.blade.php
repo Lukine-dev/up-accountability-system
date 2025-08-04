@@ -39,6 +39,12 @@
             color: #fff !important;
         }
 
+        .navbar .nav-link.active,
+        .navbar .dropdown-item.active {
+            background-color: rgba(255, 255, 255, 0.25) !important;
+            font-weight: bold;
+        }
+
         .navbar .nav-link:hover,
         .navbar .dropdown-item:hover {
             background-color: rgba(255, 255, 255, 0.1);
@@ -46,14 +52,13 @@
 
         .dropdown-menu {
             background-color: var(--theme-color);
+            animation: dropdown-fade 0.3s ease-in-out;
+            transform-origin: top;
         }
 
-        .dropdown-menu .dropdown-item {
-            color: #fff;
-        }
 
-        .dropdown-menu .dropdown-item:hover {
-            background-color: rgba(255, 255, 255, 0.15);
+        .dropdown-menu .dropdown-item i {
+            margin-right: 8px;
         }
     </style>
 
@@ -92,7 +97,11 @@
                                 <li class="nav-item"><a class="nav-link" href="{{ route('register') }}">Register</a></li>
                             @endif
                         @else
-                            <li class="nav-item"><a class="nav-link" href="{{ route('home') }}">Dashboard</a></li>
+                            <li class="nav-item">
+                                <a class="nav-link {{ request()->routeIs('home') ? 'active' : '' }}" href="{{ route('home') }}">
+                                    Dashboard
+                                </a>
+                            </li>
 
                             <!-- Admin Controls Dropdown -->
                             <li class="nav-item dropdown">
@@ -102,11 +111,18 @@
                                 </a>
 
                                 <div class="dropdown-menu dropdown-menu-end" aria-labelledby="adminDropdown">
-                                    {{-- <a class="dropdown-item" href="{{ route('monitor.issued_equipment') }}">Equipment Issued</a> --}}       
-                                    <a class="dropdown-item" href="{{ route('staff.index') }}">Staff Controls</a>
-                                    <a class="dropdown-item" href="{{ route('applications.index') }}">Accountability Forms</a>
-                                    <a class="dropdown-item" href="{{ route('equipment.index') }}">Equipment Issued</a>
-                                      <a class="dropdown-item" href="{{ route('history') }}">History Logs</a>
+                                    <a class="dropdown-item {{ request()->routeIs('staff.index') ? 'active' : '' }}" href="{{ route('staff.index') }}">
+                                        <i class="bi bi-people-fill"></i> Staff Controls
+                                    </a>
+                                    <a class="dropdown-item {{ request()->routeIs('applications.index') ? 'active' : '' }}" href="{{ route('applications.index') }}">
+                                        <i class="bi bi-file-earmark-text"></i> Accountability Forms
+                                    </a>
+                                    <a class="dropdown-item {{ request()->routeIs('equipment.index') ? 'active' : '' }}" href="{{ route('equipment.index') }}">
+                                        <i class="bi bi-box-seam"></i> Equipment Issued
+                                    </a>
+                                    <a class="dropdown-item {{ request()->routeIs('history') ? 'active' : '' }}" href="{{ route('history') }}">
+                                        <i class="bi bi-clock-history"></i> History Logs
+                                    </a>
                                 </div>
                             </li>
 
@@ -118,10 +134,15 @@
                                 </a>
 
                                 <div class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                                    <a class="dropdown-item {{ request()->routeIs('users.index') ? 'active' : '' }}" href="{{ route('users.index') }}">
+                                        <i class="bi bi-person-gear"></i> Manage Users
+                                    </a>
+
                                     <a class="dropdown-item" href="{{ route('logout') }}"
                                        onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                                        {{ __('Logout') }}
+                                        <i class="bi bi-box-arrow-right"></i> Logout
                                     </a>
+
                                     <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
                                         @csrf
                                     </form>
@@ -156,6 +177,5 @@
             });
         </script>
     @endif
-    
 </body>
 </html>

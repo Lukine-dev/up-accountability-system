@@ -96,7 +96,7 @@
         <div class="table-responsive">
             <table class="table table-striped align-middle mb-0">
                 <thead class="text-white" style="background-color: #90143c;">
-                    <tr>
+                    <tr class="text-center">
                         <th>Name</th>
                         <th>Email</th>
                         <th>Office</th>
@@ -105,12 +105,12 @@
                         <th>Actions</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody class="text-center">
                     @foreach($staffs as $staff)
                         @include('partials.confirm_modal', ['deleteRoute' => route('staff.destroy', $staff->id)])
                         @include('staff.partials.equipments_modal', ['staff' => $staff])
                         @include('staff.partials.form_edit_modal', ['staff' => $staff])
-                        <tr>
+                        <tr onclick="window.location='{{ route('staff.show', $staff->id) }}';" style="cursor: pointer;">
                             <td>{{ $staff->name }}</td>
                             <td>{{ $staff->email }}</td>
                             <td>{{ $staff->system_office }}</td>
@@ -120,12 +120,28 @@
                                     {{ ucfirst($staff->status) }}
                                 </span>
                             </td>
-                            <td class="d-flex flex-wrap gap-1">
-                                <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#editStaffModal{{ $staff->id }}">Edit</button>
-                                <a href="{{ route('staff.show', $staff->id) }}" class="btn btn-sm btn-outline-secondary">Show</a>
-                                <button class="btn btn-outline-info btn-sm" data-bs-toggle="modal" data-bs-target="#equipmentsModal{{ $staff->id }}">Equipments</button>
-                                <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">Delete</button>
-                            </td>
+                        <td class="text-center">
+                            <div class="d-flex justify-content-center gap-2">
+                                <!-- Edit Button -->
+                                <button class="btn btn-sm btn-outline-warning d-flex align-items-center justify-content-center" title="Edit"
+                                    data-bs-toggle="modal" data-bs-target="#editStaffModal{{ $staff->id }}">
+                                    ✏️
+                                </button>
+
+                                <!-- Equipments Button -->
+                                <button class="btn btn-sm btn-outline-info d-flex align-items-center justify-content-center" title="Equipments"
+                                    data-bs-toggle="modal" data-bs-target="#equipmentsModal{{ $staff->id }}">
+                                    💻
+                                </button>
+
+                                <!-- Delete Button -->
+                                <button class="btn btn-sm btn-outline-danger d-flex align-items-center justify-content-center" title="Delete"
+                                    data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">
+                                    🗑️
+                                </button>
+                            </div>
+                        </td>
+
                         </tr>
                     @endforeach
                 </tbody>
@@ -145,4 +161,5 @@
         });
     });
 </script>
+
 @endsection

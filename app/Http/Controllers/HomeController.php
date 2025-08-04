@@ -17,7 +17,9 @@ class HomeController extends Controller
                 'totalStaff' => Staff::count(),
                 'activeStaff' => Staff::where('status', 'active')->count(),
                 'resignedStaff' => Staff::where('status', 'resigned')->count(),
-                'totalApplications' => Application::count(),
+                'totalApplications' => \App\Models\Application::whereHas('staff', function ($query) {
+                    $query->where('status', 'active');
+                })->count(),
                 'totalEquipmentReleased' => \App\Models\Application::whereHas('staff', function ($query) {
                     $query->where('status', 'active');
                 })->with('equipments')->get()->flatMap->equipments->sum('quantity'),

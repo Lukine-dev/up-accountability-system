@@ -6,6 +6,8 @@ use App\Http\Controllers\ApplicationController;
 use App\Http\Controllers\IssuedEquipmentController;
 use App\Http\Controllers\EquipmentController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\UserManagementController;
+use App\Http\Controllers\UserController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -49,7 +51,21 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/staff/{id}/download-equipment-csv', [StaffController::class, 'downloadStaffEquipmentCSV'])->name('staff.downloadEquipmentCSV');
 
     // HISTORY LOGS
-    Route::get('/history', [App\Http\Controllers\UserController::class, 'history'])->name('history');
+    Route::get('/history', [UserController::class, 'history'])->name('history');
+    Route::post('/history/delete', [UserController::class, 'deleteHistoryByDate'])->name('history.deleteByDate');
+    Route::get('/history/preview-count', [UserController::class, 'previewLogCount'])->name('history.previewCount');
+    Route::get('/history/export', [UserController::class, 'exportLogsByDate'])->name('history.export');
+    Route::get('/history/filter', [UserController::class, 'filterByDate']);
+
+     // User Management Routes (restricted to authenticated users)
+    Route::prefix('users')->name('users.')->group(function () {
+        Route::get('/', [UserManagementController::class, 'index'])->name('index');
+        Route::get('/create', [UserManagementController::class, 'create'])->name('create');
+        Route::post('/', [UserManagementController::class, 'store'])->name('store');
+        Route::get('/{user}/edit', [UserManagementController::class, 'edit'])->name('edit');
+        Route::put('/{user}', [UserManagementController::class, 'update'])->name('update');
+        Route::delete('/{user}', [UserManagementController::class, 'destroy'])->name('destroy');
+    });
 
 });
 
