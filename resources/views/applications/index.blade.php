@@ -108,7 +108,7 @@
                     <tbody>
                         @forelse ($applications as $application)
                                @include('partials.confirm_modal', ['deleteRoute' => route('applications.destroy', $application->id)])
-                            <tr onclick="window.location='{{ route('applications.show', $application->id) }}'" style="cursor: pointer;">
+                            <tr>
                                 <td class="fw-medium">{{ $application->reference_number }}</td>
                                 <td>{{ $application->staff->name }}</td>
                                 <td>{{ $application->created_at->format('Y-m-d') }}</td>
