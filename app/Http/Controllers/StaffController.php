@@ -139,7 +139,13 @@ class StaffController extends Controller
         {
             $staff->delete();
 
-  
+                      // Log action
+            UserAction::log(
+                'Deleted',
+                'Deleted staff record: ' . $staff->name,
+                'Staff',
+                $staff->id
+            );
 
             return redirect()->route('staff.index')->with('success', 'Staff deleted successfully');
         }
@@ -150,13 +156,7 @@ class StaffController extends Controller
 
             $pdf = Pdf::loadView('pdf.staff_all_equipments', compact('staff'));
 
-              // Log action
-            UserAction::log(
-                'Deleted',
-                'Deleted staff record: ' . $staff->name,
-                'Staff',
-                $staff->id
-            );
+    
             return $pdf->download('Staff_Equipment_Summary_' . $staff->name . '.pdf');
         }
 

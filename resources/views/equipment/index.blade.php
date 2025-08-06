@@ -4,42 +4,43 @@
 
 @section('content')
 <div class="container py-4">
-
-   <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="text-maroon fw-bold mb-0">Issued Equipment Records</h1>
-
-        <a href="{{ route('equipment.downloadCSV') }}" class="btn btn-success d-inline-flex align-items-center">
-            <i class="bi bi-file-earmark-csv me-2"></i> Export Issued Equipment CSV
+    {{-- Header --}}
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="h4 fw-normal text-muted">Issued Equipment</h2>
+        <a href="{{ route('equipment.downloadCSV') }}" class="btn btn-sm btn-outline-dark">
+            <i class="bi bi-download me-1"></i> Export CSV
         </a>
     </div>
 
-    {{-- Filter Inputs --}}
+    {{-- Filters --}}
     <div class="row g-2 mb-4">
         <div class="col-md-4">
-            <input type="text" id="searchInput" class="form-control" placeholder="Search name or model...">
+            <input type="text" id="searchInput" class="form-control form-control-sm" 
+                   placeholder="Search name/model">
         </div>
         <div class="col-md-4">
-            <input type="text" id="departmentInput" class="form-control" placeholder="Filter by department...">
+            <input type="text" id="departmentInput" class="form-control form-control-sm" 
+                   placeholder="Department">
         </div>
         <div class="col-md-4">
-            <input type="text" id="officeInput" class="form-control" placeholder="Filter by office...">
+            <input type="text" id="officeInput" class="form-control form-control-sm" 
+                   placeholder="Office">
         </div>
     </div>
 
-
-    <!-- Loader Spinner -->
+    {{-- Loader --}}
     <div id="loader" class="text-center my-3" style="display: none;">
-        <div class="spinner-border text-maroon" role="status">
+        <div class="spinner-border spinner-border-sm text-dark" role="status">
             <span class="visually-hidden">Loading...</span>
         </div>
     </div>
 
-    {{-- Accordion Container --}}
-    <div id="accordionResults">
+    {{-- Results --}}
+    <div id="accordionResults" class="border-top">
         @include('equipment.partials.accordion', ['paginator' => $paginator])
     </div>
 </div>
-@endsection
+
 <script>
     document.addEventListener('DOMContentLoaded', () => {
         const searchInput = document.getElementById('searchInput');
@@ -51,7 +52,7 @@
         let debounceTimer;
 
         const fetchFilteredResults = (url = null) => {
-            loader.style.display = 'block'; // Show loader
+            loader.style.display = 'block';
 
             const params = new URLSearchParams({
                 search: searchInput.value,
@@ -67,7 +68,7 @@
                     accordionResults.innerHTML = html;
                 })
                 .finally(() => {
-                    loader.style.display = 'none'; // Hide loader after content loads
+                    loader.style.display = 'none';
                 });
         };
 
@@ -80,7 +81,6 @@
         departmentInput.addEventListener('input', debounceFetch);
         officeInput.addEventListener('input', debounceFetch);
 
-        // Listen to pagination clicks
         document.addEventListener('click', function (e) {
             if (e.target.matches('.pagination a')) {
                 e.preventDefault();
@@ -89,23 +89,4 @@
         });
     });
 </script>
-
-
-<style>
-    .text-maroon { color: #90143c; }
-
-    .btn-theme {
-        background-color: #90143c;
-        color: white;
-    }
-
-    .btn-theme:hover {
-        background-color: #6f0f2e;
-        color: white;
-    }
-    .spinner-border.text-maroon {
-        border-color: #90143c;
-        border-right-color: transparent;
-    }
-</style>
-
+@endsection

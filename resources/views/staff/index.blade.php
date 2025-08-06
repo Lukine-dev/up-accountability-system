@@ -4,115 +4,120 @@
 @include('staff.partials.form_add_modal')
 
 @section('content')
-<div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2 class="fw-bold mb-0" style="color: #90143c;">👥 Staff List</h2>
-        <button class="btn text-white" style="background-color: #90143c;" data-bs-toggle="modal" data-bs-target="#addStaffModal">
-            <i class="bi bi-person-plus-fill me-1"></i> Add Staff
+@php
+    $hasFilters = request()->filled('search') || request()->filled('system_office') || 
+                  request()->filled('designation') || request()->filled('status') ||
+                  request()->filled('sort_by') || request()->filled('sort_order');
+@endphp
+
+<div class="container py-4">
+    {{-- Header --}}
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="h4 fw-normal text-muted">Staff List</h2>
+        <button class="btn btn-dark btn-sm" data-bs-toggle="modal" data-bs-target="#addStaffModal">
+            <i class="bi bi-person-plus me-1"></i> Add Staff
         </button>
     </div>
 
-    {{-- Filter Toggle --}}
-    @php
-        $hasFilters = request()->filled('search') || request()->filled('system_office') || request()->filled('designation') || request()->filled('status');
-    @endphp
-
-    <div class="mb-3">
-        <button class="btn btn-outline-dark btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#filterCollapse" aria-expanded="false" aria-controls="filterCollapse">
+    {{-- Filters --}}
+    <div class="mb-4">
+        <button class="btn btn-sm btn-outline-secondary mb-2" type="button" 
+                data-bs-toggle="collapse" data-bs-target="#filterCollapse" 
+                aria-expanded="{{ $hasFilters ? 'true' : 'false' }}">
             <i class="bi bi-funnel"></i> Filters
         </button>
-    </div>
 
-    {{-- Filter Form --}}
-    <div class="collapse {{ $hasFilters ? 'show' : '' }}" id="filterCollapse">
-        <div class="card mb-4">
-            <div class="card-body">
-                <form method="GET" action="{{ route('staff.index') }}" id="filterForm">
-                    <div class="row g-3">
-                        <div class="col-md-4">
-                            <label for="search" class="form-label">Search Name</label>
-                            <input type="text" name="search" id="search" value="{{ request('search') }}" class="form-control" placeholder="Enter name">
-                        </div>
-                        <div class="col-md-4">
-                            <label for="system_office" class="form-label">Office</label>
-                            <select name="system_office" id="system_office" class="form-select">
-                                <option value="">-- Select Office --</option>
-                                @foreach($offices as $office)
-                                    <option value="{{ $office }}" {{ request('system_office') == $office ? 'selected' : '' }}>{{ $office }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="col-md-4">
-                            <label for="designation" class="form-label">Designation</label>
-                            <select name="designation" id="designation" class="form-select">
-                                <option value="">-- Select Designation --</option>
-                                @foreach($designations as $designation)
-                                    <option value="{{ $designation }}" {{ request('designation') == $designation ? 'selected' : '' }}>{{ $designation }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="col-md-4">
-                            <label for="status" class="form-label">Status</label>
-                            <select name="status" id="status" class="form-select">
-                                <option value="">-- Select Status --</option>
-                                <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>Active</option>
-                                <option value="resigned" {{ request('status') == 'resigned' ? 'selected' : '' }}>Resigned</option>
-                            </select>
-                        </div>
-                        <div class="col-md-4">
-                            <label for="sort_by" class="form-label">Sort By</label>
-                            <select name="sort_by" id="sort_by" class="form-select">
-                                <option value="">-- Select Column --</option>
-                                <option value="name" {{ request('sort_by') == 'name' ? 'selected' : '' }}>Name</option>
-                                <option value="email" {{ request('sort_by') == 'email' ? 'selected' : '' }}>Email</option>
-                                <option value="system_office" {{ request('sort_by') == 'system_office' ? 'selected' : '' }}>Office</option>
-                                <option value="designation" {{ request('sort_by') == 'designation' ? 'selected' : '' }}>Designation</option>
-                                <option value="status" {{ request('sort_by') == 'status' ? 'selected' : '' }}>Status</option>
-                            </select>
-                        </div>
-                        <div class="col-md-4">
-                            <label for="sort_order" class="form-label">Sort Order</label>
-                            <select name="sort_order" id="sort_order" class="form-select">
-                                <option value="asc" {{ request('sort_order') == 'asc' ? 'selected' : '' }}>Ascending</option>
-                                <option value="desc" {{ request('sort_order') == 'desc' ? 'selected' : '' }}>Descending</option>
-                            </select>
-                        </div>
-                        <div class="col-md-2">
-                            <label class="form-label d-block invisible">.</label>
-                            <button type="submit" class="btn btn-primary w-100">Filter</button>
-                        </div>
-                        <div class="col-md-2">
-                            <label class="form-label d-block invisible">.</label>
-                            <a href="{{ route('staff.index') }}" class="btn btn-outline-secondary w-100">Reset</a>
-                        </div>
+        <div class="collapse {{ $hasFilters ? 'show' : '' }}" id="filterCollapse">
+            <div class="card card-body bg-light p-3">
+                <form method="GET" action="{{ route('staff.index') }}" id="filterForm" class="row g-2">
+                    <div class="col-md-3">
+                        <input type="text" name="search" value="{{ request('search') }}" 
+                               class="form-control form-control-sm" placeholder="Search name">
+                    </div>
+                    
+                    <div class="col-md-3">
+                        <select name="system_office" class="form-select form-select-sm">
+                            <option value="">All Offices</option>
+                            @foreach($offices as $office)
+                                <option value="{{ $office }}" {{ request('system_office') == $office ? 'selected' : '' }}>
+                                    {{ $office }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    
+                    <div class="col-md-3">
+                        <select name="designation" class="form-select form-select-sm">
+                            <option value="">All Designations</option>
+                            @foreach($designations as $designation)
+                                <option value="{{ $designation }}" {{ request('designation') == $designation ? 'selected' : '' }}>
+                                    {{ $designation }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    
+                    <div class="col-md-3">
+                        <select name="status" class="form-select form-select-sm">
+                            <option value="">All Statuses</option>
+                            <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>Active</option>
+                            <option value="resigned" {{ request('status') == 'resigned' ? 'selected' : '' }}>Resigned</option>
+                        </select>
+                    </div>
+                    
+                    <div class="col-md-3">
+                        <select name="sort_by" class="form-select form-select-sm">
+                            <option value="">Sort By</option>
+                            <option value="name" {{ request('sort_by') == 'name' ? 'selected' : '' }}>Name</option>
+                            <option value="email" {{ request('sort_by') == 'email' ? 'selected' : '' }}>Email</option>
+                            <option value="system_office" {{ request('sort_by') == 'system_office' ? 'selected' : '' }}>Office</option>
+                            <option value="designation" {{ request('sort_by') == 'designation' ? 'selected' : '' }}>Designation</option>
+                            <option value="status" {{ request('sort_by') == 'status' ? 'selected' : '' }}>Status</option>
+                        </select>
+                    </div>
+                    
+                    <div class="col-md-3">
+                        <select name="sort_order" class="form-select form-select-sm">
+                            <option value="asc" {{ request('sort_order') == 'asc' ? 'selected' : '' }}>Ascending</option>
+                            <option value="desc" {{ request('sort_order') == 'desc' ? 'selected' : '' }}>Descending</option>
+                        </select>
+                    </div>
+                    
+                    <div class="col-md-3 d-flex gap-2">
+                        <button type="submit" class="btn btn-sm btn-dark flex-grow-1">
+                            Apply
+                        </button>
+                        <a href="{{ route('staff.index') }}" class="btn btn-sm btn-outline-secondary">
+                            Reset
+                        </a>
                     </div>
                 </form>
             </div>
         </div>
     </div>
 
-    {{-- Table View --}}
-    <div class="card shadow-sm border-0">
+    {{-- Table --}}
+    <div class="card border-0 shadow-sm">
         <div class="table-responsive">
-            <table class="table table-striped align-middle mb-0">
-                <thead class="text-white" style="background-color: #90143c;">
+            <table class="table table-hover mb-0">
+                <thead class="small bg-dark text-white">
                     <tr>
-                        <th>Name</th>
+                        <th class="ps-3">Name</th>
                         <th>Email</th>
                         <th>Office</th>
                         <th>Designation</th>
                         <th>Status</th>
-                        <th>Actions</th>
+                        <th class="pe-3 text-end">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($staffs as $staff)
+                    @forelse($staffs as $staff)
                         @include('partials.confirm_modal', ['deleteRoute' => route('staff.destroy', $staff->id)])
                         @include('staff.partials.equipments_modal', ['staff' => $staff])
                         @include('staff.partials.form_edit_modal', ['staff' => $staff])
                         <tr>
-                            <td>{{ $staff->name }}</td>
-                            <td>{{ $staff->email }}</td>
+                            <td class="ps-3">{{ $staff->name }}</td>
+                            <td class="text-muted">{{ $staff->email }}</td>
                             <td>{{ $staff->system_office }}</td>
                             <td>{{ $staff->designation }}</td>
                             <td>
@@ -120,38 +125,51 @@
                                     {{ ucfirst($staff->status) }}
                                 </span>
                             </td>
-                          <td class="text-center">
-                                <div class="d-flex flex-wrap justify-content-center gap-1">
-                                    <!-- Edit Button -->
-                                    <button class="btn btn-sm btn-outline-warning" data-bs-toggle="modal" data-bs-target="#editStaffModal{{ $staff->id }}" title="Edit">
-                                        ✏️
+                            <td class="pe-3 text-end">
+                                <div class="btn-group btn-group-sm" role="group">
+                                    <button class="btn btn-outline-secondary" 
+                                            data-bs-toggle="modal" 
+                                            data-bs-target="#editStaffModal{{ $staff->id }}"
+                                            title="Edit">
+                                        <i class="bi bi-pencil"></i>
                                     </button>
-
-                                    <!-- Show Button -->
-                                    <a href="{{ route('staff.show', $staff->id) }}" class="btn btn-sm btn-outline-secondary" title="Show">
-                                        👁️
+                                    
+                                    <a href="{{ route('staff.show', $staff->id) }}" 
+                                       class="btn btn-outline-secondary"
+                                       title="View">
+                                        <i class="bi bi-eye"></i>
                                     </a>
-
-                                    <!-- Equipments Button -->
-                                    <button class="btn btn-sm btn-outline-info" data-bs-toggle="modal" data-bs-target="#equipmentsModal{{ $staff->id }}" title="Equipments">
-                                        💻
+                                    
+                                    <button class="btn btn-outline-secondary" 
+                                            data-bs-toggle="modal" 
+                                            data-bs-target="#equipmentsModal{{ $staff->id }}"
+                                            title="Equipments">
+                                        <i class="bi bi-laptop"></i>
                                     </button>
-
-                                    <!-- Delete Button -->
-                                    <button class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal" title="Delete">
-                                        🗑️
+                                    
+                                    <button class="btn btn-outline-danger" 
+                                            data-bs-toggle="modal" 
+                                            data-bs-target="#confirmDeleteModal"
+                                            title="Delete">
+                                        <i class="bi bi-trash"></i>
                                     </button>
                                 </div>
                             </td>
-
                         </tr>
-                    @endforeach
+
+                          @empty
+                        <tr>
+                            <td colspan="6" class="text-center py-4 text-muted">No staff found</td>
+                        </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>
-         <div class="d-flex justify-content-center my-4">
-        {{ $staffs->withQueryString()->links('vendor.pagination.bootstrap-5') }}
     </div>
+
+    {{-- Pagination --}}
+    <div class="mt-4 d-flex justify-content-center">
+        {{ $staffs->withQueryString()->links('vendor.pagination.bootstrap-5') }}
     </div>
 </div>
 
@@ -163,5 +181,4 @@
         });
     });
 </script>
-
 @endsection

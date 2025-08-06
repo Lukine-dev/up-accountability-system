@@ -46,7 +46,7 @@
             </div>
         </div>
     @empty
-        <div class="alert alert-info text-center">No issued equipment records found.</div>
+        <div class="alert text-center">No issued equipment records found.</div>
     @endforelse
 </div>
 

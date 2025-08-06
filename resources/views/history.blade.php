@@ -5,9 +5,7 @@
 @section('content')
 <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <h3 class="fw-bold text-maroon">
-            <i class="bi bi-clock-history me-2"></i> User Action Logs
-        </h3>
+       <h2 class="h4 fw-normal text-muted">History Logs</h2>  
     </div>
 
     <div class="row g-3 mb-4">

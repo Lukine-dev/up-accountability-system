@@ -11,6 +11,7 @@
         }
 
         body {
+            position: relative;
             background: linear-gradient(
                         rgba(0, 0, 0, 0.6),
                         rgba(0, 0, 0, 0.6)
@@ -21,8 +22,36 @@
             color: white;
         }
 
+        /* Breathing gradient overlay */
+        .gradient-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            background: linear-gradient(-45deg, #90143c, #e96443, #ec008c, #7f00ff);
+            background-size: 400% 400%;
+            opacity: 0.3;
+            animation: gradientShift 15s ease infinite, breathing 6s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes breathing {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.6; }
+        }
+
         .welcome-container {
             height: 100vh;
+            position: relative;
+            z-index: 1;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -85,6 +114,9 @@
 @endpush
 
 @section('content')
+    <!-- Animated Gradient Overlay -->
+    <div class="gradient-overlay"></div>
+
     <div class="welcome-container">
         <img src="{{ asset('storage/upitdc_images/logo-png.png') }}" alt="Logo" class="logo">
         <h3 class="welcome-heading">Welcome to <br>UP ITDC Accountability Form System</h3>

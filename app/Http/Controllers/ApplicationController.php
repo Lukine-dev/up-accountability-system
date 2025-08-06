@@ -222,7 +222,7 @@ class ApplicationController extends Controller
         $pdf = Pdf::loadView('pdf.accountability_form', compact('form', 'user', 'items'))
                     ->setPaper('a4', 'portrait'); // A4 size, portrait orientation
 
-            return $pdf->download('ICT_Accountability_Form.pdf');
+            return $pdf->download('ICT_Accountability_Form ' .  $form->reference_number .  '.pdf');
         }
     
 

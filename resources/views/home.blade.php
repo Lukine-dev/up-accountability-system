@@ -3,284 +3,431 @@
 @section('content')
 <style>
     :root {
-        --theme-color: #90143c;
-        --theme-light: #fce6ec;
+        --primary: #90143c;
+        --primary-light: #fce6ec;
+        --gray-100: #f8f9fa;
+        --gray-200: #e9ecef;
+        --gray-500: #adb5bd;
+        --gray-800: #343a40;
     }
 
-    .text-theme {
-        color: var(--theme-color);
+    /* Base Typography */
+    body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        color: var(--gray-800);
+        line-height: 1.5;
     }
 
-    .bg-theme {
-        background-color: var(--theme-color);
-        color: white;
-    }
-
-    .card-theme {
-        border-left: 5px solid var(--theme-color);
+    /* Card Styles */
+    .card {
+        border: none;
         border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        overflow: hidden;
+    }
+
+    .card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-header {
         background: white;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.07);
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-        animation: fadeInUp 0.5s ease;
+        border-bottom: 1px solid var(--gray-200);
+        padding: 1.25rem 1.5rem;
     }
 
-    .card-theme:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
-    }
-
-    .icon-circle {
-        background-color: #f9dfe6;
-        color: var(--theme-color);
-        border-radius: 50%;
-        padding: 0.7rem;
-        font-size: 1.5rem;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 48px;
-        height: 48px;
-    }
-
-    .quick-link {
+    /* Metric Cards */
+    .metric-card {
+        padding: 1rem;
         display: flex;
         align-items: center;
-        gap: 0.75rem;
-        background: var(--theme-light);
-        border: 1px solid #eee;
-        padding: 0.9rem 1.2rem;
-        border-radius: 10px;
-        font-weight: 500;
-        transition: all 0.2s ease-in-out;
-        animation: fadeIn 0.6s ease;
+        gap: 1rem;
     }
 
-    .quick-link:hover {
-        background: #f5d1db;
-        text-decoration: none;
-        transform: scale(1.02);
+    .metric-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
     }
 
-    .section-title {
-        color: var(--theme-color);
-        border-bottom: 2px solid var(--theme-color);
-        padding-bottom: 0.4rem;
-        margin-bottom: 1.5rem;
+    .metric-value {
+        font-size: 1.75rem;
         font-weight: 600;
-        animation: fadeInDown 0.5s ease;
+        line-height: 1.2;
     }
 
-    @keyframes fadeInUp {
-        0% { opacity: 0; transform: translateY(20px); }
-        100% { opacity: 1; transform: translateY(0); }
+    .metric-label {
+        color: var(--gray-500);
+        font-size: 0.875rem;
     }
 
-    @keyframes fadeIn {
-        from { opacity: 0; }
-        to { opacity: 1; }
+    /* Navigation */
+    .nav-card {
+        padding: 1.25rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        background: white;
+        border-radius: 12px;
+        transition: all 0.2s ease;
     }
 
-    @keyframes fadeInDown {
-        from { opacity: 0; transform: translateY(-20px); }
-        to { opacity: 1; transform: translateY(0); }
+    .nav-card:hover {
+        background: var(--primary-light);
+        transform: translateY(-2px);
+    }
+
+    .nav-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        background: var(--primary-light);
+        color: var(--primary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+    }
+
+    /* Tables */
+    .data-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+
+    .data-table th {
+        background: var(--gray-100);
+        padding: 0.75rem 1rem;
+        text-align: left;
+        font-weight: 600;
+        font-size: 0.875rem;
+        color: var(--gray-800);
+    }
+
+    .data-table td {
+        padding: 1rem;
+        border-bottom: 1px solid var(--gray-200);
+        vertical-align: middle;
+    }
+
+    .data-table tr:last-child td {
+        border-bottom: none;
+    }
+
+    /* Utility Classes */
+    .text-primary {
+        color: var(--primary);
+    }
+
+    .bg-primary {
+        background-color: var(--primary);
+    }
+
+    .bg-primary-light {
+        background-color: var(--primary-light);
+    }
+
+    .rounded-lg {
+        border-radius: 12px;
+    }
+
+    .shadow-xs {
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+
+    .transition {
+        transition: all 0.2s ease;
     }
 </style>
 
-<div class="container py-4">
-    <h1 class="mb-4 text-theme">🏠 ICT Home Dashboard</h1>
-
-    {{-- Info Cards --}}
-    <div class="row g-4 mb-4">
-                <!-- Total Staff Card -->
-                <div class="col-md-6">
-                    <div class="card card-theme p-4 d-flex flex-row align-items-center shadow-sm gap-3">
-                        <div class="icon-circle bg-maroon text-white  me-3">
-                            <i class="bi bi-people-fill fs-4"></i>
-                        </div>
-                        <div>
-                            <h6 class="text-muted mb-1">Total Staff</h6>
-                            <h4 class="mb-0">{{ $totalStaff }}</h4>
-                        </div>
-
-                         <div class="icon-circle bg-success text-white me-3">
-                            <i class="bi bi-person-check-fill fs-4"></i>
-                        </div>
-                        <div>
-                            <h6 class="text-muted mb-1">Active Staff</h6>
-                            <h4 class="mb-0">{{ $activeStaff }}</h4>
-                        </div>
-                        <div class="icon-circle bg-danger text-white me-3">
-                            <i class="bi bi-person-dash-fill fs-4"></i>
-                        </div>
-                        <div>
-                            <h6 class="text-muted mb-1">Resigned Staff</h6>
-                            <h4 class="mb-0">{{ $resignedStaff }}</h4>
-                        </div>
-
-                    </div>
-                </div>
-            
-          <div class="col-md-3">
-            <div class="card card-theme p-4 d-flex flex-row align-items-center">
-                <div class="icon-circle me-3">
-                    <i class="bi bi-file-earmark-text-fill"></i>
-                </div>
-                <div>
-                    <h6 class="mb-1">Total Accountability Forms</h6>
-                    <h4 class="mb-0">{{ $totalApplications }}</h4>
-                </div>
-            </div>
-        </div>
-         
-        <div class="col-md-3">
-            <div class="card card-theme p-4 d-flex flex-row align-items-center">
-                <div class="icon-circle me-3">
-                    <i class="bi bi-box-arrow-up-right"></i>
-                </div>
-                <div>
-                    <h6 class="mb-1">Equipment Released</h6>
-                    <h4 class="mb-0">{{ $totalEquipmentReleased }}</h4>
-                </div>
-            </div>
-        </div>
+<div class="container mt-3 ">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1 class="h3 fw-bold text-maroon">ICT Dashboard</h1>
+        <div class="text-muted small">Last updated: {{ now()->format('M j, Y H:i') }}</div>
     </div>
 
-    {{-- Quick Search --}}
-    <h5 class="section-title">🔍 Quick Search</h5>
-    <div class="row g-3 mb-5">
-        <div class="col-md-4">
-            <form method="GET" action="{{ route('staff.index') }}">
-                <div class="input-group">
-                    <input type="text" name="search" class="form-control" placeholder="Search Staff by name/email...">
-                    <button class="btn btn-theme" type="submit">
-                        <i class="bi bi-search"></i>
-                    </button>
-                </div>
-            </form>
-        </div>
-        <div class="col-md-4">
-            <form method="GET" action="{{ route('applications.index') }}">
-                <div class="input-group">
-                    <input type="text" name="search" class="form-control" placeholder="Search Form reference number">
-                    <button class="btn btn-theme" type="submit">
-                        <i class="bi bi-search"></i>
-                    </button>
-                </div>
-            </form>
-        </div>
-         <div class="col-md-4">
-            <form method="GET" action="{{ route('equipment.index') }}">
-                <div class="input-group">
-                    <input type="text" name="search" class="form-control" placeholder="Search Equipment">
-                    <button class="btn btn-theme" type="submit">
-                        <i class="bi bi-search"></i>
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
 
-    {{-- Quick Navigation --}}
-    <h5 class="section-title">🔗 Quick Navigation</h5>
+    <!-- Search Section - Retained and Enhanced -->
     <div class="row g-3 mb-4">
         <div class="col-md-4">
-            <a href="{{ route('staff.index') }}" class="quick-link">
-                <i class="bi bi-people-fill"></i> View Staff List
-            </a>
+            <div class="search-card">
+                <form method="GET" action="{{ route('staff.index') }}">
+                    <div class="input-group">
+                        <input type="text" name="search" class="form-control search-input" 
+                               placeholder="Search staff..." aria-label="Search staff">
+                        <button class="btn search-btn" type="submit">
+                            <i class="bi bi-search"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
         <div class="col-md-4">
-            <a href="{{ route('applications.index') }}" class="quick-link">
-                <i class="bi bi-journal-text"></i> View Accountability Forms
-            </a>
+            <div class="search-card">
+                <form method="GET" action="{{ route('applications.index') }}">
+                    <div class="input-group">
+                        <input type="text" name="search" class="form-control search-input" 
+                               placeholder="Search forms..." aria-label="Search forms">
+                        <button class="btn search-btn" type="submit">
+                            <i class="bi bi-search"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
         <div class="col-md-4">
-            <a href="{{ route('equipment.index') }}" class="quick-link">
-                <i class="bi bi-box-seam"></i> View Released Equipment
-            </a>
+            <div class="search-card">
+                <form method="GET" action="{{ route('equipment.index') }}">
+                    <div class="input-group">
+                        <input type="text" name="search" class="form-control search-input" 
+                               placeholder="Search equipment..." aria-label="Search equipment">
+                        <button class="btn search-btn" type="submit">
+                            <i class="bi bi-search"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
-    </div>
 
 
-            {{-- Department Filter --}}
-        <div class="row g-3 mb-4">
-            <div class="col-md-6">
-                  <div class="card card-theme mb-3">
-                    <div class="card-header bg-theme d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0">🧾 Recently Resigned Staff</h5>
-                        <select id="departmentFilter" class="form-select w-auto">
-                            <option value="">All Departments</option>
-                            @foreach($departments as $dept)
-                                <option value="{{ $dept }}">{{ $dept }}</option>
-                            @endforeach
-                        </select>
+    <!-- Metrics Grid -->
+    <div class="row g-4 mb-4">
+        <!-- Staff Metrics -->
+        <div class="col-md-6">
+            <div class="card h-auto ">
+                <div class="card-header d-flex justify-content-between align-items-center " >
+                    <h5 class="mb-0">Metrics</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <div class="metric-card">
+                                <div class="metric-icon bg-primary-light text-primary">
+                                    <i class="bi bi-people-fill"></i>
+                                </div>
+                                <div>
+                                    <div class="metric-value">{{ $totalStaff }}</div>
+                                    <div class="metric-label">Total Staff</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="metric-card">
+                                <div class="metric-icon bg-success bg-opacity-10 text-success">
+                                    <i class="bi bi-person-check-fill"></i>
+                                </div>
+                                <div>
+                                    <div class="metric-value">{{ $activeStaff }}</div>
+                                    <div class="metric-label">Active</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="metric-card">
+                                <div class="metric-icon bg-danger bg-opacity-10 text-danger">
+                                    <i class="bi bi-person-dash-fill"></i>
+                                </div>
+                                <div>
+                                    <div class="metric-value">{{ $resignedStaff }}</div>
+                                    <div class="metric-label">Resigned</div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
-                    <div id="resignedEmployeesTable">
+                <div class="row mt-1">
+                     <div class="col-md-6">
+                        <div class="card h-auto " onclick="location.href='{{ route('applications.index') }}'" style="cursor: pointer;">
+                            <div class="metric-card" style="border-top: 4px solid var(--primary);">
+                                <div class="metric-icon bg-primary-light text-primary">
+                                    <i class="bi bi-file-earmark-text"></i>
+                                </div>
+                                <div>
+                                    <div class="metric-value">{{ $totalApplications }}</div>
+                                    <div class="metric-label">Accountability Forms</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+           
+                    <div class="col-md-6">
+                        <div class="card h-auto" onclick="location.href='{{ route('equipment.index') }}'" style="cursor: pointer;">
+                                <div class="metric-card" style="border-top: 4px solid var(--primary);">
+                                    <div class="metric-icon bg-primary-light text-primary">
+                                        <i class="bi bi-box-seam"></i>
+                                    </div>
+                                    <div>
+                                        <div class="metric-value">{{ $totalEquipmentReleased }}</div>
+                                        <div class="metric-label">Equipment Released</div>
+                                    </div>
+                                </div>   
+                               </div>
+                    </div>
+                </div>
+                   
+                             
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Other Metrics -->
+        <div class="col-md-6">
+                <div class="">
+    
+                    <a href="{{ route('staff.index') }}" class="nav-card text-decoration-none mb-3">
+                        <div class="nav-icon">
+                            <i class="bi bi-people-fill"></i>
+                        </div>
+                        <div>
+                            <div class="fw-medium">Staff List</div>
+                            <div class="text-muted small">Manage all staff members</div>
+                        </div>
+                    </a>
+     
+                    <a href="{{ route('applications.index') }}" class="nav-card text-decoration-none mb-3">
+                        <div class="nav-icon">
+                            <i class="bi bi-journal-text"></i>
+                        </div>
+                        <div>
+                            <div class="fw-medium">Accountability Forms</div>
+                            <div class="text-muted small">View all forms</div>
+                        </div>
+                    </a>
+      
+                    <a href="{{ route('equipment.index') }}" class="nav-card text-decoration-none ">
+                        <div class="nav-icon">
+                            <i class="bi bi-box-seam"></i>
+                        </div>
+                        <div>
+                            <div class="fw-medium">Equipment</div>
+                            <div class="text-muted small">Track released items</div>
+                        </div>
+                    </a>
+
+            </div>
+        </div>
+
+   
+    <!-- Recent Activity -->
+    <div class="row g-2">
+        <div class="col-md-6">
+                        
+                    {{-- Recently Resigned Staff Accordion Card --}}
+            <div class="card card-theme">
+                 <button class="btn btn-link text-maroon text-decoration-none" type="button"
+                            data-bs-toggle="collapse" data-bs-target="#resignedStaffCollapse"
+                            aria-expanded="false" aria-controls="resignedStaffCollapse">
+                        <div class="card-header bg-theme d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">                   
+                                    🧾 Recently Resigned Staff
+                        
+                            </h5>
+                            <select id="departmentFilter" class="form-select w-auto">
+                                <option value="">All Departments</option>
+                                @foreach($departments as $dept)
+                                    <option value="{{ $dept }}">{{ $dept }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                </button>
+
+                <div id="resignedStaffCollapse" class="collapse">
+                    <div class="card-body" id="resignedEmployeesTable">
                         @include('partials.resigned-employees', ['employees' => $resignedEmployees])
                     </div>
-                </div>     
+                </div>
             </div>
-            
-             <div class="col-md-6">
-                  <div class="card card-theme mb-3">
-                    <div class="card-header bg-theme d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0"> <i class="bi bi-person-check-fill fs-4 me-1"></i> Recently Added Staff</h5>
-                        <select id="departmentFilter2" class="form-select w-auto">
-                            <option value="">All Departments</option>
-                            @foreach($departments as $dept)
-                                <option value="{{ $dept }}">{{ $dept }}</option>
-                            @endforeach
-                        </select>
-                    </div>
 
-                    <div id="latestEmployeesTable">
-                        @include('partials.latest-employees', ['employees' => $latestEmployees])
-                    </div>
-                </div>     
-            </div>
-              
-        </div>
-
-                <div class="mt-5">
-            <h4>System Users</h4>
-            <div class="table-responsive">
-                <table class="table table-bordered table-sm table-hover">
-                    <thead class="table-light">
-                        <tr>
-                            <th>#</th>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Registered At</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($users as $user)
-                            <tr>
-                                <td>{{ $loop->iteration }}</td>
-                                <td>{{ $user->name }}</td>
-                                <td>{{ $user->email }}</td>
-                                <td>{{ $user->created_at->format('Y-m-d H:i') }}</td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-             <!-- Pagination Links -->
-            <div class="d-flex justify-content-center mt-3">
-                {{ $users->links('vendor.pagination.bootstrap-5') }}
-            </div>
-        </div>
-
+    
           
+
+        
+        </div>
+
+         <div class="col-md-6">
+                    {{-- Recently Added Staff Accordion Card --}}
+                <div class="card card-theme">
+                    <button class="btn btn-link text-maroon text-decoration-none" type="button"
+                    data-bs-toggle="collapse" data-bs-target="#addedStaffCollapse"
+                    aria-expanded="false" aria-controls="addedStaffCollapse">
+                            <div class="card-header bg-theme d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">
+                        
+                                        <i class="bi bi-person-check-fill fs-5 me-2"></i> Recently Added Staff
+                            
+                                </h5>
+                                <select id="departmentFilter2" class="form-select w-auto">
+                                    <option value="">All Departments</option>
+                                    @foreach($departments as $dept)
+                                        <option value="{{ $dept }}">{{ $dept }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div id="addedStaffCollapse" class="collapse">
+                                <div class="card-body" id="latestEmployeesTable">
+                                    @include('partials.latest-employees', ['employees' => $latestEmployees])
+                                </div>
+                            </div>
+                    </button>
+                </div>
+         </div>
+            
+             {{-- <div class="col-md-6">
+                 
+    <!-- System Users -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">System Users</h5>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Registered</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($users as $user)
+                                    <tr>
+                                        <td>{{ $loop->iteration }}</td>
+                                        <td>{{ $user->name }}</td>
+                                        <td>{{ $user->email }}</td>
+                                        <td>{{ $user->created_at->format('Y-m-d H:i') }}</td>
+                                    </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-white">
+                        {{ $users->links('vendor.pagination.bootstrap-5') }}
+                    </div>
+                </div>
+            </div> --}}
     </div>
+    
+
 </div>
 
-
-
-{{-- Include Bootstrap Icons --}}
+<!-- Bootstrap Icons -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 
+<!-- Inter Font -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {

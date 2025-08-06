@@ -1,9 +1,9 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container mt-5">
+<div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="fw-bold" style="color: #90143c;">📝 Create Accountability Form</h2>
+        <h2 class="fw-semibold text-dark">📝 Create Accountability Form</h2>
         <a href="{{ route('applications.index') }}" class="btn btn-outline-secondary">
             <i class="bi bi-arrow-left-circle"></i> Back to List
         </a>
@@ -14,7 +14,7 @@
 
         {{-- Staff Selection --}}
         <div class="card shadow-sm mb-4 border-0">
-            <div class="card-header text-white" style="background-color: #90143c;">
+            <div class="card-header bg-theme text-white fw-semibold">
                 👤 Select Staff
             </div>
             <div class="card-body">
@@ -33,19 +33,19 @@
 
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <label class="form-label">Full Name:</label>
+                        <label class="form-label">Full Name</label>
                         <input type="text" id="staff_name" class="form-control" readonly>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <label class="form-label">System Office:</label>
+                        <label class="form-label">System Office</label>
                         <input type="text" id="staff_system_office" class="form-control" readonly>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <label class="form-label">Designation:</label>
+                        <label class="form-label">Designation</label>
                         <input type="text" id="staff_designation" class="form-control" readonly>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <label class="form-label">Department / Office Unit:</label>
+                        <label class="form-label">Department / Office Unit</label>
                         <input type="text" id="staff_department" class="form-control" readonly>
                     </div>
                 </div>
@@ -54,33 +54,32 @@
 
         {{-- Equipments --}}
         <div class="card shadow-sm mb-4 border-0">
-            <div class="card-header d-flex justify-content-between align-items-center text-white" style="background-color: #90143c;">
+            <div class="card-header d-flex justify-content-between align-items-center bg-theme text-white fw-semibold">
                 <span>🧰 Register Equipments</span>
-                <button type="button" class="btn btn-sm text-white border-light" onclick="addRow()" style="background-color: #90143c;">
+                <button type="button" class="btn btn-sm text-white border-light" onclick="addRow()">
                     <i class="bi bi-plus-circle"></i> Add Equipment
                 </button>
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
-                    <table class="table table-bordered m-0" id="equipments-table">
+                    <table class="table table-bordered align-middle m-0" id="equipments-table">
                         <thead class="table-light">
                             <tr>
                                 <th>Description</th>
                                 <th>Model/Brand</th>
                                 <th>Serial Number</th>
                                 <th>Quantity</th>
-                                <th></th>
+                                <th style="width: 40px;"></th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td><input type="text" class="form-control name-field" name="equipments[0][name]" required oninput="syncDescription(this)"></td>
-                                <td><input type="text" class="form-control" name="equipments[0][model_brand]"></td>
+                                <td><input type="text" class="form-control name-field" name="equipments[0][name]" required oninput="this.value = this.value.toUpperCase(); syncDescription(this)"></td>
+                                <td><input type="text" class="form-control" name="equipments[0][model_brand]" oninput="this.value = this.value.toUpperCase();"></td>
                                 <td><input type="text" class="form-control" name="equipments[0][serial_number]"></td>
                                 <td><input type="number" class="form-control" name="equipments[0][quantity]" required min="1"></td>
                                 <td><button type="button" class="btn btn-sm btn-outline-danger" onclick="removeRow(this)">
-                                    <i class="bi bi-x-lg"></i></button>
-                                </td>
+                                    <i class="bi bi-x-lg"></i></button></td>
                             </tr>
                         </tbody>
                     </table>
@@ -93,7 +92,7 @@
             <a href="{{ route('applications.index') }}" class="btn btn-outline-secondary">
                 <i class="bi bi-x-circle"></i> Cancel
             </a>
-            <button type="submit" class="btn text-white" style="background-color: #90143c;">
+            <button type="submit" class="btn text-white bg-theme border-0">
                 <i class="bi bi-check-circle-fill"></i> Submit Form
             </button>
         </div>
@@ -114,17 +113,14 @@
     function addRow() {
         const tbody = document.querySelector('#equipments-table tbody');
         const row = document.createElement('tr');
-
         row.innerHTML = `
             <td><input type="text" class="form-control name-field" name="equipments[${rowCount}][name]" required oninput="syncDescription(this)"></td>
             <td><input type="text" class="form-control" name="equipments[${rowCount}][model_brand]"></td>
             <td><input type="text" class="form-control" name="equipments[${rowCount}][serial_number]"></td>
             <td><input type="number" class="form-control" name="equipments[${rowCount}][quantity]" required min="1"></td>
             <td><button type="button" class="btn btn-sm btn-outline-danger" onclick="removeRow(this)">
-                <i class="bi bi-x-lg"></i></button>
-            </td>
+                <i class="bi bi-x-lg"></i></button></td>
         `;
-
         tbody.appendChild(row);
         rowCount++;
     }
@@ -133,13 +129,25 @@
         button.closest('tr').remove();
     }
 
-    // Automatically sync the description field with the name field
     function syncDescription(input) {
         const row = input.closest('tr');
         const description = row.querySelector('.description-field');
-        if (description) {
-            description.value = input.value;
-        }
+        if (description) description.value = input.value;
     }
 </script>
+
+{{-- Inline Theme Style --}}
+<style>
+    .bg-theme {
+        background-color: #90143c !important;
+    }
+
+    .text-theme {
+        color: #90143c !important;
+    }
+
+    .btn.bg-theme:hover {
+        background-color: #7a1234 !important;
+    }
+</style>
 @endsection
