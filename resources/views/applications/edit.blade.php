@@ -2,11 +2,26 @@
 
 @section('content')
 <div class="container mt-5">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="fw-bold mb-0" style="color: #90143c;">✏️ Edit ICT Device Accountability Form</h2>
-        <a href="{{ route('applications.index') }}" class="btn btn-outline-secondary">
-            <i class="bi bi-arrow-left-circle"></i> Back to List
-        </a>
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+        <h2 class="fw-bold mb-0 me-3" style="color: #90143c;">✏️ Edit ICT Device Accountability Form</h2>
+
+        <div class="d-flex align-items-center gap-2">
+            <a href="{{ route('applications.index') }}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left-circle"></i> Back to List
+            </a>
+
+            @if($application->status !== 'returned')
+                <form id="return-form-{{ $application->id }}" method="POST" action="{{ route('applications.markReturned', $application->id) }}">
+                    @csrf
+                    <button type="button" class="btn btn-warning"
+                        onclick="confirmMarkReturned({{ $application->id }})">
+                        Mark as Returned
+                    </button>
+                </form>
+            @else
+                <button class="btn btn-success" disabled>Returned</button>
+            @endif
+        </div>
     </div>
 
     <form method="POST" action="{{ route('applications.update', $application->id) }}" class="card shadow-sm border-0 p-4">
@@ -56,6 +71,7 @@
             </div>
         </div>
 
+
         <div class="d-flex justify-content-end gap-2 mt-4">
             <button type="submit" class="btn text-white" style="background-color: #90143c;">
                 <i class="bi bi-save"></i> Update
@@ -65,6 +81,7 @@
             </a>
         </div>
     </form>
+
 </div>
 
 {{-- JS for dynamic row handling --}}
@@ -101,5 +118,23 @@
     function removeRow(button) {
         button.closest('.row').remove();
     }
+
+    function confirmMarkReturned(applicationId) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "This will mark the application as returned.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, mark as returned',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById('return-form-' + applicationId).submit();
+            }
+        });
+    }
+
 </script>
 @endsection

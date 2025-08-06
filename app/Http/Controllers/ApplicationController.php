@@ -44,6 +44,10 @@ class ApplicationController extends Controller
         $query->whereDate('created_at', $request->date);
     }
 
+     if ($request->filled('status')) {
+        $query->where('status', $request->status);
+    }
+
     // Sorting
     $sortBy = $request->get('sort_by', 'created_at');
     $sortOrder = $request->get('sort_order', 'desc');
@@ -77,10 +81,11 @@ class ApplicationController extends Controller
 
         public function store(Request $request)
     {
-        $request->validate([
+       $request->validate([
             'staff_id' => 'required|exists:staff,id',
             'equipments.*.name' => 'required|string|max:255',
             'equipments.*.quantity' => 'required|integer|min:1',
+            'status' => 'nullable|in:pending,approved,denied,returned',
         ]);
 
         $reference = Application::generateReferenceNumber();
@@ -89,12 +94,14 @@ class ApplicationController extends Controller
             'staff_id' => $request->staff_id,
             'reference_number' => $reference,
             'application_date' => now(),
+            'status' => $request->status ?? 'active', // default fallback
+            'returned_at' => $request->status === 'returned' ? now() : null,
         ]);
+
 
         foreach ($request->equipments as $equipmentData) {
             $application->equipments()->create([
                 'name' => $equipmentData['name'],
-       
                 'model_brand' => $equipmentData['model_brand'] ?? null,
                 'serial_number' => $equipmentData['serial_number'] ?? null,
                 'quantity' => $equipmentData['quantity'],
@@ -128,60 +135,60 @@ class ApplicationController extends Controller
         return view('applications.edit', compact('application', 'staffs'));
     }
 
-    public function update(Request $request, $id)
+ public function update(Request $request, $id)
 {
     $request->validate([
         'staff_id' => 'required|exists:staff,id',
+        'status' => 'nullable|in:pending,approved,denied,returned',
+        'returned_at' => 'nullable|date',
         'equipments.*.name' => 'required|string|max:255',
         'equipments.*.quantity' => 'required|integer|min:1',
     ]);
 
     $application = Application::findOrFail($id);
 
-    // Update the application’s staff assignment
-    $application->update([
-        'staff_id' => $request->staff_id,
-    ]);
+    // Update the application’s data
+        $application->update([
+            'staff_id' => $request->staff_id,
+            'status' => $request->status ?? $application->status,
+            'returned_at' => $request->returned_at ?? $application->returned_at,
+        ]);
 
-    // Track existing equipment IDs to keep
-    $existingIds = [];
+        // Track existing equipment IDs to keep
+        $existingIds = [];
 
-    foreach ($request->equipments as $equipmentData) {
-        if (isset($equipmentData['id'])) {
-            // Update existing equipment
-            $equipment = $application->equipments()->where('id', $equipmentData['id'])->first();
-            if ($equipment) {
-                $equipment->update([
+        foreach ($request->equipments as $equipmentData) {
+            if (isset($equipmentData['id'])) {
+                $equipment = $application->equipments()->where('id', $equipmentData['id'])->first();
+                if ($equipment) {
+                    $equipment->update([
+                        'name' => $equipmentData['name'],
+                        'model_brand' => $equipmentData['model_brand'] ?? null,
+                        'serial_number' => $equipmentData['serial_number'] ?? null,
+                        'quantity' => $equipmentData['quantity'],
+                    ]);
+                    $existingIds[] = $equipment->id;
+                }
+            } else {
+                $newEquipment = $application->equipments()->create([
                     'name' => $equipmentData['name'],
-              
                     'model_brand' => $equipmentData['model_brand'] ?? null,
                     'serial_number' => $equipmentData['serial_number'] ?? null,
                     'quantity' => $equipmentData['quantity'],
                 ]);
-                $existingIds[] = $equipment->id;
+                $existingIds[] = $newEquipment->id;
             }
-        } else {
-            // Create new equipment
-            $newEquipment = $application->equipments()->create([
-                'name' => $equipmentData['name'],
-              
-                'model_brand' => $equipmentData['model_brand'] ?? null,
-                'serial_number' => $equipmentData['serial_number'] ?? null,
-                'quantity' => $equipmentData['quantity'],
-            ]);
-            $existingIds[] = $newEquipment->id;
         }
+
+        // Delete equipments not in the current form
+        $application->equipments()->whereNotIn('id', $existingIds)->delete();
+
+        // Log action
+        UserAction::log('Updated', 'Updated accountability form ID: ' . $application->id, 'Accountability Form', $application->id);
+
+        return redirect()->route('applications.index')->with('success', 'Application updated successfully.');
     }
 
-    // Delete equipments not in the current form
-    $application->equipments()->whereNotIn('id', $existingIds)->delete();
-        
-    // When updating
-    UserAction::log('Updated', 'Updated accountability form ID: ' . $application->id, 'Accountability Form', $application->id);
-
-    return redirect()->route('applications.index')->with('success', 'Application updated successfully.');
-}
-  
 
 
     public function destroy($id)
@@ -196,7 +203,22 @@ class ApplicationController extends Controller
         return redirect()->route('applications.index')->with('success', 'Application deleted.');
     }
 
-    public function downloadPDF($id)
+
+    public function markReturned($id)
+    {
+        $application = Application::findOrFail($id);
+
+        $application->update([
+            'status' => 'returned',
+            'returned_at' => now(),
+        ]);
+
+        UserAction::log('Returned', 'Marked accountability form ID ' . $application->id . ' as returned', 'Accountability Form', $application->id);
+
+        return redirect()->back()->with('success', 'Application marked as returned.');
+    }
+
+        public function downloadPDF($id)
     {
         $form = Application::with(['staff', 'equipments'])->findOrFail($id);
         $user = $form->staff;
@@ -205,29 +227,23 @@ class ApplicationController extends Controller
             return (object) [
                 'quantity' => $equipment->quantity,
                 'name' => $equipment->name,
-        
                 'model_brand' => $equipment->model_brand ?? '-',
                 'serial_number' => $equipment->serial_number ?? '-',
             ];
         });
 
-    
-    //      // Log action
-    // UserAction::log(
-    //     'Exported',
-    //     'Downloaded PDF for accountability form.',
-    //     'Accountability Form',
-    //     $form->id
-            // );
-        $pdf = Pdf::loadView('pdf.accountability_form', compact('form', 'user', 'items'))
-                    ->setPaper('a4', 'portrait'); // A4 size, portrait orientation
+        // Include status and returned_at directly, if you prefer explicitness
+        $status = $form->status;
+        $returnedAt = $form->returned_at;
 
-            return $pdf->download('ICT_Accountability_Form ' .  $form->reference_number .  '.pdf');
-        }
+        $pdf = Pdf::loadView('pdf.accountability_form', compact('form', 'user', 'items', 'status', 'returnedAt'))
+                ->setPaper('a4', 'portrait');
+
+        return $pdf->download('ICT_Accountability_Form_' . $form->reference_number . '.pdf');
+    }
     
 
-
-        public function downloadCSV($id)
+    public function downloadCSV($id)
     {
         $form = Application::with(['staff', 'equipments'])->findOrFail($id);
         $user = $form->staff;
@@ -247,23 +263,24 @@ class ApplicationController extends Controller
         $callback = function () use ($form, $columns) {
             $file = fopen('php://output', 'w');
 
-            // Optional: Add header info
+            // Header Information
             fputcsv($file, ['Reference Number:', $form->reference_number]);
             fputcsv($file, ['Staff Name:', $form->staff->name]);
             fputcsv($file, ['Department:', $form->staff->department]);
             fputcsv($file, ['Designation:', $form->staff->designation]);
             fputcsv($file, ['Date:', $form->created_at->format('Y-m-d')]);
+            fputcsv($file, ['Status:', ucfirst($form->status)]);
+            fputcsv($file, ['Returned At:', $form->returned_at ? $form->returned_at->format('Y-m-d') : 'Not returned']);
             fputcsv($file, []); // Blank line
 
-            // Add column headers
+            // Table Headers
             fputcsv($file, $columns);
 
-            // Add equipment rows
+            // Equipment rows
             foreach ($form->equipments as $equipment) {
                 fputcsv($file, [
                     $equipment->quantity,
                     $equipment->name,
-
                     $equipment->model_brand ?? '-',
                     $equipment->serial_number ?? '-',
                 ]);
@@ -272,18 +289,11 @@ class ApplicationController extends Controller
             fclose($file);
         };
 
-        // // Log action
-        // UserAction::log(
-        //     'Exported',
-        //     'Downloaded CSV for accountability form.',
-        //     'Accountability Form',
-        //     $form->id
-        // );
-
         return Response::stream($callback, 200, $headers);
     }
 
-        public function downloadAllCSV()
+
+    public function downloadAllCSV()
     {
         $applications = Application::with(['staff', 'equipments'])->get();
         $filename = 'All_Applications_Equipment_Summary.csv';
@@ -306,6 +316,8 @@ class ApplicationController extends Controller
             'Model/Brand',
             'Serial Number',
             'Quantity',
+            'Status',
+            'Returned At',
         ];
 
         $callback = function () use ($applications, $columns) {
@@ -321,24 +333,17 @@ class ApplicationController extends Controller
                         $app->staff->department ?? '-',
                         $app->staff->designation ?? '-',
                         $eq->name,
-
                         $eq->model_brand ?? '-',
                         $eq->serial_number ?? '-',
                         $eq->quantity,
+                        ucfirst($app->status ?? 'N/A'),
+                        $app->returned_at ? $app->returned_at->format('Y-m-d') : '-',
                     ]);
                 }
             }
 
             fclose($file);
         };
-
-        // // Log action
-        // UserAction::log(
-        //     'Exported',
-        //     'Downloaded CSV for all accountability forms.',
-        //     'Accountability Form',
-        //     null
-        // );
 
         return response()->stream($callback, 200, $headers);
     }

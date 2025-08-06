@@ -57,6 +57,9 @@
                         <div>
                             <strong>Ref #:</strong> {{ $application->reference_number }} |
                             <strong>Date:</strong> {{ \Carbon\Carbon::parse($application->application_date)->format('F d, Y') }}
+                            <span class="mx-3 p-1 badge bg-{{ $application->status === 'active' ? 'success' : 'danger' }}">
+                                    {{ ucfirst($application->status) }}
+                            </span>
                         </div>
                         <div>
                              <a href="{{ route('applications.show', $application->id) }}" class="btn btn-sm btn-outline-info">

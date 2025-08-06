@@ -65,6 +65,17 @@
                             @endforeach
                         </select>
                     </div>
+
+                    <div class="col-md-3">
+                        <select name="status" class="form-select form-select-sm">
+                            <option value="">All Statuses</option>
+                            @foreach(['active', 'returned'] as $status)
+                                <option value="{{ $status }}" {{ request('status') === $status ? 'selected' : '' }}>
+                                    {{ ucfirst($status) }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
                     
                     <div class="col-md-3 d-flex gap-2">
                         <button type="submit" class="btn btn-sm btn-dark flex-grow-1">
@@ -89,14 +100,15 @@
 
     {{-- Table --}}
     <div class="card border-0 shadow-sm">
-        <div class="table-responsive">
+        <div class="table-responsive text-center">
             <table class="table table-hover mb-0">
                 <thead class="small bg-dark text-white">
                     <tr>
                         <th class="ps-3">Reference</th>
                         <th>Staff</th>
                         <th>Date</th>
-                        <th class="pe-3 text-end">Actions</th>
+                        <th>Status</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -106,7 +118,13 @@
                             <td class="ps-3 text-muted">{{ $application->reference_number }}</td>
                             <td>{{ $application->staff->name }}</td>
                             <td class="text-muted">{{ $application->created_at->format('Y-m-d') }}</td>
-                            <td class="pe-3 text-end">
+                            <td>
+                                <span class="badge bg-{{ $application->status === 'active' ? 'success' : 'danger' }}">
+                                    {{ ucfirst($application->status) }}
+                                </span>
+
+                            </td>
+                            <td>
                                 <div class="btn-group btn-group-sm" role="group">
                                     <a href="{{ route('applications.show', $application->id) }}" 
                                        class="btn btn-sm btn-outline-secondary" title="View">

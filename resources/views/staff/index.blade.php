@@ -98,8 +98,8 @@
 
     {{-- Table --}}
     <div class="card border-0 shadow-sm">
-        <div class="table-responsive">
-            <table class="table table-hover mb-0">
+        <div class="table-responsive ">
+            <table class="table table-hover mb-0 text-center">
                 <thead class="small bg-dark text-white">
                     <tr>
                         <th class="ps-3">Name</th>
@@ -107,7 +107,7 @@
                         <th>Office</th>
                         <th>Designation</th>
                         <th>Status</th>
-                        <th class="pe-3 text-end">Actions</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -125,7 +125,7 @@
                                     {{ ucfirst($staff->status) }}
                                 </span>
                             </td>
-                            <td class="pe-3 text-end">
+                            <td >
                                 <div class="btn-group btn-group-sm" role="group">
                                     <button class="btn btn-outline-secondary" 
                                             data-bs-toggle="modal" 

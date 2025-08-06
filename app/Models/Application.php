@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Application extends Model
 {
     use HasFactory;
-     protected $fillable = ['staff_id', 'reference_number', 'application_date'];
+     protected $fillable = ['staff_id', 'reference_number', 'application_date','status', 'returned_at'];
 
     public function staff()
     {
@@ -37,6 +37,7 @@ class Application extends Model
     }
         protected $casts = [
         'application_date' => 'datetime',
+        'returned_at' => 'datetime',
     ];
     
     public function equipment()

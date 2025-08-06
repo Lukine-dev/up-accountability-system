@@ -40,7 +40,11 @@
                             <span class="float-end text-muted small">
                                 {{ \Carbon\Carbon::parse($application->application_date)->format('F d, Y') }}
                             </span>
+                              <span class="mx-3 badge bg-{{ $application->status === 'active' ? 'success' : 'danger' }}">
+                                    {{ ucfirst($application->status) }}
+                             </span>
                         </div>
+                        
                         <ul class="list-group list-group-flush">
                             @foreach ($application->equipments as $equipment)
                                 <li class="list-group-item d-flex justify-content-between align-items-start">

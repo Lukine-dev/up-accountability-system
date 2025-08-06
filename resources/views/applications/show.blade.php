@@ -24,6 +24,23 @@
 
     <div class="card shadow-sm border-0">
         <div class="card-body">
+
+            <div class="col-md-6 mb-2">
+                <span class="fw-semibold">📌 Status:</span>
+                @if($application->status === 'returned')
+                    <span class="badge bg-danger">Returned</span>
+                @elseif($application->status === 'issued')
+                    <span class="badge bg-warning text-dark">Issued</span>
+                @else
+                    <span class="badge bg-success">{{ ucfirst($application->status) }}</span>
+                @endif
+            </div>
+                @if($application->status === 'returned' && $application->returned_at)
+                    <div class="col-md-6 mb-2">
+                        <span class="fw-semibold">📅 Returned At:</span> {{ \Carbon\Carbon::parse($application->returned_at)->format('F d, Y h:i A') }}
+                    </div>
+                @endif
+
             <div class="row mb-3">
                 <div class="col-md-6 mb-2">
                     <span class="fw-semibold">📎 Reference #:</span> {{ $application->reference_number }}

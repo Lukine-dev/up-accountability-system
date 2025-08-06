@@ -124,6 +124,8 @@
                 <th>Description</th>
                 <th>Model/Brand</th>
                 <th>Serial Number</th>
+                <th>Status</th>
+                <th>Returned At</th>
             </tr>
         </thead>
         <tbody>
@@ -131,13 +133,19 @@
                 @foreach ($application->equipments as $equipment)
                     <tr>
                         <td>{{ $application->reference_number }}</td>
-                        <td>
-                            {{ \Carbon\Carbon::parse($application->application_date)->format('F d, Y') }}
-                        </td>
+                        <td>{{ \Carbon\Carbon::parse($application->application_date)->format('F d, Y') }}</td>
                         <td>{{ $equipment->quantity }}</td>
                         <td>{{ $equipment->name }}</td>
                         <td>{{ $equipment->model_brand ?? '-' }}</td>
                         <td>{{ $equipment->serial_number ?? '-' }}</td>
+                        <td>{{ ucfirst($application->status) ?? '-' }}</td>
+                        <td>
+                            @if ($application->returned_at)
+                                {{ \Carbon\Carbon::parse($application->returned_at)->format('F d, Y') }}
+                            @else
+                                -
+                            @endif
+                        </td>
                     </tr>
                 @endforeach
             @endforeach

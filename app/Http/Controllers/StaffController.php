@@ -160,50 +160,73 @@ class StaffController extends Controller
             return $pdf->download('Staff_Equipment_Summary_' . $staff->name . '.pdf');
         }
 
-        public function downloadStaffEquipmentCSV($id)
-    {
-        $staff = Staff::with('applications.equipments')->findOrFail($id);
-        $filename = 'Staff_Equipment_Summary_' . preg_replace('/\s+/', '_', $staff->name) . '.csv';
-
-        $headers = [
-            "Content-Type" => "text/csv",
-            "Content-Disposition" => "attachment; filename=$filename",
-            "Pragma" => "no-cache",
-            "Cache-Control" => "must-revalidate",
-            "Expires" => "0",
-        ];
-
-        $columns = ['Reference Number', 'Date Issued', 'Quantity', 'Description', 'Model/Brand', 'Serial Number'];
-
-        $callback = function () use ($staff, $columns) {
-            $file = fopen('php://output', 'w');
-
-            // Header Info
-            fputcsv($file, ['Staff Name:', $staff->name]);
-            fputcsv($file, ['Email:', $staff->email]);
-            fputcsv($file, ['Designation:', $staff->designation]);
-            fputcsv($file, ['Department:', $staff->department]);
-            fputcsv($file, ['System Office:', $staff->system_office]);
-            fputcsv($file, []); // blank line
-
-            fputcsv($file, $columns);
-
-            foreach ($staff->applications as $application) {
-                foreach ($application->equipments as $equipment) {
-                    fputcsv($file, [
-                        $application->reference_number,
-                        $application->created_at->format('Y-m-d'),
-                        $equipment->quantity,
-                        $equipment->name,
-                        $equipment->model_brand ?? '-',
-                        $equipment->serial_number ?? '-',
-                    ]);
+                
+        public function downloadStaffEquipmentCSV(Request $request, $id)
+        {
+            $staff = Staff::with(['applications' => function ($query) use ($request) {
+                if ($request->has('status') && $request->status !== '') {
+                    $query->where('status', $request->status);
                 }
-            }
 
-            fclose($file);
-        };
+                if ($request->has('start_date') && $request->has('end_date')) {
+                    $query->whereBetween('created_at', [$request->start_date, $request->end_date]);
+                }
+            }, 'applications.equipments'])->findOrFail($id);
 
-        return Response::stream($callback, 200, $headers);
-    }
+            $filename = 'Staff_Equipment_Summary_' . preg_replace('/\s+/', '_', $staff->name) . '.csv';
+
+            $headers = [
+                "Content-Type" => "text/csv",
+                "Content-Disposition" => "attachment; filename=$filename",
+                "Pragma" => "no-cache",
+                "Cache-Control" => "must-revalidate",
+                "Expires" => "0",
+            ];
+
+            $columns = [
+                'Reference Number',
+                'Date Issued',
+                'Quantity',
+                'Description',
+                'Model/Brand',
+                'Serial Number',
+                'Status',
+                'Returned At'
+            ];
+
+            $callback = function () use ($staff, $columns) {
+                $file = fopen('php://output', 'w');
+
+                // Staff Info
+                fputcsv($file, ['Staff Name:', $staff->name]);
+                fputcsv($file, ['Email:', $staff->email]);
+                fputcsv($file, ['Designation:', $staff->designation]);
+                fputcsv($file, ['Department:', $staff->department]);
+                fputcsv($file, ['System Office:', $staff->system_office]);
+                fputcsv($file, []); // blank line
+
+                // Table header
+                fputcsv($file, $columns);
+
+                foreach ($staff->applications as $application) {
+                    foreach ($application->equipments as $equipment) {
+                        fputcsv($file, [
+                            $application->reference_number,
+                            $application->created_at->format('Y-m-d'),
+                            $equipment->quantity,
+                            $equipment->name,
+                            $equipment->model_brand ?? '-',
+                            $equipment->serial_number ?? '-',
+                            ucfirst($application->status),
+                            $application->returned_at ? $application->returned_at->format('Y-m-d') : '-'
+                        ]);
+                    }
+                }
+
+                fclose($file);
+            };
+
+            return Response::stream($callback, 200, $headers);
+        }
+
 }

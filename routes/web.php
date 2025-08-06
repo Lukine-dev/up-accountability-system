@@ -33,6 +33,8 @@ Route::middleware(['auth'])->group(function () {
     // INDIVIDUAL ROUTES
      Route::get('/issued-equipment', [IssuedEquipmentController::class, 'index'])
         ->name('monitor.issued_equipment');
+     Route::post('/applications/{id}/mark-returned', [ApplicationController::class, 'markReturned'])
+        ->name('applications.markReturned');
 
     // Equipment Routes
     Route::get('/equipment', [EquipmentController::class, 'index'])->name('equipment.index');

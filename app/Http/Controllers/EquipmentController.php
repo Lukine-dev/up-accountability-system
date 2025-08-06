@@ -22,11 +22,17 @@ class EquipmentController extends Controller
                     'equipment' => $eq,
                     'staff' => $app->staff,
                     'issued_at' => $app->created_at,
+                    'status' => $app->status, // Add status from application
+                    'returned_at' => $app->returned_at // 
                 ]);
             }
         }
 
-        $grouped = $equipmentList->groupBy(fn($item) => $item['equipment']->name . ' - ' . $item['equipment']->model_brand);
+       $grouped = $equipmentList
+        ->groupBy(fn($item) => $item['equipment']->name . ' - ' . $item['equipment']->model_brand)
+        ->map(function ($items) {
+            return $items->groupBy(fn($entry) => $entry['equipment']->serial_number);
+        });
 
         // Paginate initial load
         $groupKeys = $grouped->keys();
@@ -70,12 +76,18 @@ class EquipmentController extends Controller
                         'equipment' => $eq,
                         'staff' => $app->staff,
                         'issued_at' => $app->created_at,
+                        'status' => $app->status, // Add status from application
+                        'returned_at' => $app->returned_at // 
                     ]);
                 }
             }
         }
 
-        $grouped = $equipmentList->groupBy(fn($item) => $item['equipment']->name . ' - ' . $item['equipment']->model_brand);
+            $grouped = $equipmentList
+                ->groupBy(fn($item) => $item['equipment']->name . ' - ' . $item['equipment']->model_brand)
+                ->map(function ($items) {
+                    return $items->groupBy(fn($entry) => $entry['equipment']->serial_number);
+                });
 
         // Paginate the groups
         $groupKeys = $grouped->keys();
@@ -99,53 +111,60 @@ class EquipmentController extends Controller
         return view('equipment.partials.accordion', compact('paginator'))->render();
     }
 
-        
+                
         public function downloadCSV()
-    {
-        $applications = Application::with(['equipments', 'staff'])->get();
-        $equipmentList = collect();
+        {
+            $applications = Application::with(['equipments', 'staff'])->get();
+            $equipmentList = collect();
 
-        foreach ($applications as $app) {
-            foreach ($app->equipments as $eq) {
-                $equipmentList->push([
-                    'Reference Number' => $app->reference_number,
-                    'Date Issued' => $app->created_at->format('Y-m-d'),
-                    'Staff Name' => $app->staff->name,
-                    'Designation' => $app->staff->designation,
-                    'Department' => $app->staff->department,
-                    'System Office' => $app->staff->system_office,
-                    'Equipment Name' => $eq->name,
+            foreach ($applications as $app) {
+                foreach ($app->equipments as $eq) {
+                    $equipmentList->push([
+                        'Reference Number' => $app->reference_number,
+                        'Date Issued' => optional($app->created_at)->format('Y-m-d'),
+                        'Returned Date' => optional($app->returned_at)->format('Y-m-d') ?? '-',
+                        'Status' => $app->status === 'returned' ? 'Returned' : 'Not Returned',
 
-                    'Model/Brand' => $eq->model_brand ?? '-',
-                    'Serial Number' => $eq->serial_number ?? '-',
-                    'Quantity' => $eq->quantity,
-                ]);
+                        'Staff Name' => $app->staff->name ?? '-',
+                        'Designation' => $app->staff->designation ?? '-',
+                        'Department' => $app->staff->department ?? '-',
+                        'System Office' => $app->staff->system_office ?? '-',
+
+                        'Equipment Name' => $eq->name ?? '-',
+                        'Model/Brand' => $eq->model_brand ?? '-',
+                        'Serial Number' => $eq->serial_number ?? '-',
+                        'Quantity' => $eq->quantity ?? 1,
+                    ]);
+                }
             }
+
+            $filename = 'Issued_Equipment_List.csv';
+            $headers = [
+                "Content-Type" => "text/csv",
+                "Content-Disposition" => "attachment; filename=$filename",
+                "Pragma" => "no-cache",
+                "Cache-Control" => "must-revalidate",
+                "Expires" => "0",
+            ];
+
+            $callback = function () use ($equipmentList) {
+                $file = fopen('php://output', 'w');
+
+                if ($equipmentList->isNotEmpty()) {
+                    // Write CSV headers
+                    fputcsv($file, array_keys($equipmentList->first()));
+
+                    // Write rows
+                    foreach ($equipmentList as $row) {
+                        fputcsv($file, $row);
+                    }
+                } else {
+                    fputcsv($file, ['No data available']);
+                }
+
+                fclose($file);
+            };
+
+            return Response::stream($callback, 200, $headers);
         }
-
-        $filename = 'Issued_Equipment_List.csv';
-        $headers = [
-            "Content-Type" => "text/csv",
-            "Content-Disposition" => "attachment; filename=$filename",
-            "Pragma" => "no-cache",
-            "Cache-Control" => "must-revalidate",
-            "Expires" => "0",
-        ];
-
-        $callback = function () use ($equipmentList) {
-            $file = fopen('php://output', 'w');
-
-            // Write CSV headers
-            fputcsv($file, array_keys($equipmentList->first()));
-
-            // Write rows
-            foreach ($equipmentList as $row) {
-                fputcsv($file, $row);
-            }
-
-            fclose($file);
-        };
-
-        return Response::stream($callback, 200, $headers);
-    }
 }

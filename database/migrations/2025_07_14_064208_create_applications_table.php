@@ -13,6 +13,11 @@ return new class extends Migration
             $table->foreignId('staff_id')->constrained()->onDelete('cascade');
             $table->string('reference_number')->unique();
             $table->timestamp('application_date')->nullable();
+
+            // Add status and returned_at columns
+            $table->enum('status', ['active', 'returned',])->default('active');
+            $table->timestamp('returned_at')->nullable();
+
             $table->timestamps();
         });
     }

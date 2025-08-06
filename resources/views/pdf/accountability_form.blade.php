@@ -60,6 +60,7 @@
         .section-break {
             page-break-before: always;
         }
+        
     </style>
 </head>
 <body>
@@ -138,6 +139,13 @@
     </tbody>
 </table>
 
+<table>
+        <tr>
+            <th style="width: 20%;">Remarks:</th>
+            <th style="width: 80%;"></th>
+        </tr>
+</table>
+
 <p>
     This is to acknowledge that I am accountable for the above items. I understand that I will pay or replace the
     same unit in case of loss or damage due to my fault or negligence. In case of resignation, separation or
@@ -164,13 +172,19 @@
 
 <table>
     <tr>
-        <td>Returned Date:</td>
+        <td>Returned Date:
+            @if($returnedAt)
+             {{ \Carbon\Carbon::parse($returnedAt)->format('F j, Y') }}
+            @else
+                <strong >Not Returned</strong>
+            @endif
+        </td>
           <td>Returned to:</td>
      
     </tr>
     <tr>
          
-             <td >Equipment Status:</td>
+             <td >Equipment Status: <p>{{ ucfirst($status) }}</p></td>
         <td>Signature:</td>
     </tr>
 </table>

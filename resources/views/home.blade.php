@@ -244,7 +244,7 @@
                     </div>
 
                 <div class="row mt-1">
-                     <div class="col-md-6">
+                     <div class="col-md-12">
                         <div class="card h-auto " onclick="location.href='{{ route('applications.index') }}'" style="cursor: pointer;">
                             <div class="metric-card" style="border-top: 4px solid var(--primary);">
                                 <div class="metric-icon bg-primary-light text-primary">
@@ -258,7 +258,7 @@
                         </div>
                     </div>
            
-                    <div class="col-md-6">
+                    {{-- <div class="col-md-6">
                         <div class="card h-auto" onclick="location.href='{{ route('equipment.index') }}'" style="cursor: pointer;">
                                 <div class="metric-card" style="border-top: 4px solid var(--primary);">
                                     <div class="metric-icon bg-primary-light text-primary">
@@ -270,7 +270,7 @@
                                     </div>
                                 </div>   
                                </div>
-                    </div>
+                    </div> --}}
                 </div>
                    
                              
@@ -317,71 +317,7 @@
         </div>
 
    
-    <!-- Recent Activity -->
-    <div class="row g-2">
-        <div class="col-md-6">
-                        
-                    {{-- Recently Resigned Staff Accordion Card --}}
-            <div class="card card-theme">
-                 <button class="btn btn-link text-maroon text-decoration-none" type="button"
-                            data-bs-toggle="collapse" data-bs-target="#resignedStaffCollapse"
-                            aria-expanded="false" aria-controls="resignedStaffCollapse">
-                        <div class="card-header bg-theme d-flex justify-content-between align-items-center">
-                            <h5 class="mb-0">                   
-                                    🧾 Recently Resigned Staff
-                        
-                            </h5>
-                            <select id="departmentFilter" class="form-select w-auto">
-                                <option value="">All Departments</option>
-                                @foreach($departments as $dept)
-                                    <option value="{{ $dept }}">{{ $dept }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                </button>
 
-                <div id="resignedStaffCollapse" class="collapse">
-                    <div class="card-body" id="resignedEmployeesTable">
-                        @include('partials.resigned-employees', ['employees' => $resignedEmployees])
-                    </div>
-                </div>
-            </div>
-
-    
-          
-
-        
-        </div>
-
-         <div class="col-md-6">
-                    {{-- Recently Added Staff Accordion Card --}}
-                <div class="card card-theme">
-                    <button class="btn btn-link text-maroon text-decoration-none" type="button"
-                    data-bs-toggle="collapse" data-bs-target="#addedStaffCollapse"
-                    aria-expanded="false" aria-controls="addedStaffCollapse">
-                            <div class="card-header bg-theme d-flex justify-content-between align-items-center">
-                                <h5 class="mb-0">
-                        
-                                        <i class="bi bi-person-check-fill fs-5 me-2"></i> Recently Added Staff
-                            
-                                </h5>
-                                <select id="departmentFilter2" class="form-select w-auto">
-                                    <option value="">All Departments</option>
-                                    @foreach($departments as $dept)
-                                        <option value="{{ $dept }}">{{ $dept }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-
-                            <div id="addedStaffCollapse" class="collapse">
-                                <div class="card-body" id="latestEmployeesTable">
-                                    @include('partials.latest-employees', ['employees' => $latestEmployees])
-                                </div>
-                            </div>
-                    </button>
-                </div>
-         </div>
-            
              {{-- <div class="col-md-6">
                  
     <!-- System Users -->
