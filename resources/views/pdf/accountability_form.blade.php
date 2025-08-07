@@ -191,7 +191,7 @@
     </tr>
 </table>
 
-
+{{-- 
 <script>
     if (isset($pdf)){
 
@@ -200,9 +200,9 @@
             $text = {PAGE_NUM}/{PAGE_COUNT};
             $font = $fontMetrics->getFont('DejaVu Sans', 'normal');
             $size = 10;
-            $pdf->page_text($x, $y, $text, $font, $size);
+            $pdf->page_text($x, $y, $text, $font, $size,);
     }
-</script>
+</script> --}}
 </main>
 
 </body>

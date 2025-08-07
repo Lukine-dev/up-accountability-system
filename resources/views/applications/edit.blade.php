@@ -49,14 +49,14 @@
 
             <div id="edit-equipments">
                 @foreach($application->equipments as $index => $equipment)
-                    <div class="row mb-2 align-items-center">
+                    <div class="row mb-2 align-items-start">
                         <div class="col-md-3">
                             <textarea name="equipments[{{ $index }}][name]" class="form-control auto-resize" placeholder="Description" oninput="autoResize(this)">{{ $equipment->name }}</textarea>
                         </div>
-                        <div class="col-md-2">
+                        <div class="col-md-3">
                             <textarea name="equipments[{{ $index }}][model_brand]" class="form-control auto-resize" placeholder="Model/Brand" oninput="autoResize(this)">{{ $equipment->model_brand }}</textarea>
                         </div>
-                        <div class="col-md-2">
+                        <div class="col-md-3">
                             <textarea name="equipments[{{ $index }}][serial_number]" class="form-control auto-resize" placeholder="Serial Number" oninput="autoResize(this)">{{ $equipment->serial_number }}</textarea>
                         </div>
                         <div class="col-md-2">
@@ -94,10 +94,10 @@
             <div class="col-md-3">
                 <textarea name="equipments[${editRowCount}][name]" class="form-control auto-resize" placeholder="Description" oninput="autoResize(this)"></textarea>
             </div>
-            <div class="col-md-2">
+            <div class="col-md-3">
                 <textarea name="equipments[${editRowCount}][model_brand]" class="form-control auto-resize" placeholder="Model/Brand" oninput="autoResize(this)"></textarea>
             </div>
-            <div class="col-md-2">
+            <div class="col-md-3">
                 <textarea name="equipments[${editRowCount}][serial_number]" class="form-control auto-resize" placeholder="Serial Number" oninput="autoResize(this)"></textarea>
             </div>
             <div class="col-md-2">

@@ -81,9 +81,9 @@
                             @foreach($application->equipments as $equipment)
                                 <tr class="text-center">
                                     <td>{{ $equipment->quantity }}</td>
-                                    <td>{{ $equipment->name }}</td>
-                                    <td>{{ $equipment->model_brand ?? '-' }}</td>
-                                    <td>{{ $equipment->serial_number ?? '-' }}</td>
+                                    <td >{{ $equipment->name }}</td>
+                                    <td  >{{ $equipment->model_brand ?? '-' }}</td>
+                                    <td >{{ $equipment->serial_number ?? '-' }}</td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -96,4 +96,11 @@
     </div>
 
 </div>
+
+<style>
+    td,th{
+        white-space: nowrap ;
+        max-width: 30%;
+    }
+</style>
 @endsection
