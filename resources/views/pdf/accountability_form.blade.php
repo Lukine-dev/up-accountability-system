@@ -36,12 +36,15 @@
             border-collapse: collapse;
             margin-bottom: 10px;
             page-break-inside: avoid;
+            table-layout: auto; /* allows flexible column widths */
         }
 
         td, th {
             border: 1px solid black;
             padding: 6px;
             vertical-align: top;
+            height: auto;
+            word-break: break-word; /* allow breaking long serials */
         }
 
         .no-border {
@@ -49,7 +52,8 @@
         }
 
         .signature {
-            border-top: solid black 1px;
+            border-top: solid black 1px;    
+            text-align: center;
         }
 
         .name {
@@ -60,7 +64,10 @@
         .section-break {
             page-break-before: always;
         }
-        
+        .tableSerial {
+            text-align: center
+
+        }
     </style>
 </head>
 <body>
@@ -85,16 +92,7 @@
     University of the Philippines, Diliman, Quezon City<br>
     Tel: (+63) 028 376 3100, (+63) 028 920 2080 | Telefax: (+63) 02 920 2036 | Website: itdc.up.edu.ph
 
-    <script type="text/php">
-        if (isset($pdf)) {
-            $pdf->page_script('
-                $font = $fontMetrics->get_font("DejaVu Sans", "normal");
-                $pdf->text(520, 810, "Page $PAGE_NUM of $PAGE_COUNT", $font, 10);
-            ');
-        }
-    </script>
 </footer>
-
 <main>
   
 
@@ -121,19 +119,21 @@
 <table>
     <thead>
         <tr>
-            <th>Quantity</th>
-            <th>Description</th>
-            <th>Model/Brand</th>
-            <th>Serial Number</th>
+            <th style="width: 10%;">Quantity</th>
+            <th style="width: 35%;">Description</th>
+            <th style="width: 35%;">Model/Brand</th>
+            <th style="width: 20%;">Serial Number</th>
         </tr>
     </thead>
     <tbody>
         @foreach ($items as $item)
             <tr>
-                <td style="text-align: center">{{ $item->quantity }}</td>
-                <td style="text-align: center">{{ $item->name }}</td>
-                <td style="text-align: center">{{ $item->model_brand }}</td>
-                <td style="text-align: center">{{ $item->serial_number }}</td>       
+                <td style="text-align: center; word-break: break-word;">{{ $item->quantity }}</td>
+                <td style="text-align: center; word-break: break-word;">{{ $item->name }}</td>
+                <td style="text-align: center; word-break: break-word;">{{ $item->model_brand }}</td>
+                <td style="text-align: center; word-break: break-word;">
+                    {!! str_replace(',', '<br>', e($item->serial_number)) !!}
+                </td>
             </tr>
         @endforeach
     </tbody>
@@ -146,7 +146,7 @@
         </tr>
 </table>
 
-<p>
+<p style="font-size: 9px">
     This is to acknowledge that I am accountable for the above items. I understand that I will pay or replace the
     same unit in case of loss or damage due to my fault or negligence. In case of resignation, separation or
     transfer, I will return the item/s before issuance of any clearance.
@@ -156,7 +156,10 @@
     <tr>
         <td style="border: none">Received By:<br><br><br>
             <div class="signature" > Signature over Printed Name </div>
-            <br>Received Date:</td>
+            <br>Received Date: <br> <br> <br>
+              <hr style="border-top: 1px black; margin: 0;">
+        </td>
+          
          <td style="border: none">Prepared and Issued By:<br><br>
             <div class="name">{{ auth()->user()->name ?? 'Signature over Printed Name' }}</div>
             <div class="signature">Signature over Printed Name </div>
@@ -167,14 +170,13 @@
     </tr>
 </table>
 
-<hr style="border: 1px solid black; margin: 0;">
 <p><strong>This portion is to be accomplished by ITDC personnel.</strong></p>
 
 <table>
     <tr>
         <td>Returned Date:
             @if($returnedAt)
-             {{ \Carbon\Carbon::parse($returnedAt)->format('F j, Y') }}
+               <strong >  {{ \Carbon\Carbon::parse($returnedAt)->format('F j, Y') }} </strong>
             @else
                 <strong >Not Returned</strong>
             @endif
@@ -184,13 +186,26 @@
     </tr>
     <tr>
          
-             <td >Equipment Status: <p>{{ ucfirst($status) }}</p></td>
+        <td >Equipment Status: <strong>{{ ucfirst($status) }}</strong></td>
         <td>Signature:</td>
     </tr>
 </table>
 
+
+<script>
+    if (isset($pdf)){
+
+            $x = 502;
+            $y = 780;
+            $text = {PAGE_NUM}/{PAGE_COUNT};
+            $font = $fontMetrics->getFont('DejaVu Sans', 'normal');
+            $size = 10;
+            $pdf->page_text($x, $y, $text, $font, $size);
+    }
+</script>
 </main>
 
 </body>
-</html>
 
+
+</html>

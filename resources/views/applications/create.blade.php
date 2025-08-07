@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container mt-4">
+<div class="container mt-4 p-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="fw-semibold text-dark">📝 Create Accountability Form</h2>
         <a href="{{ route('applications.index') }}" class="btn btn-outline-secondary">
@@ -74,9 +74,15 @@
                         </thead>
                         <tbody>
                             <tr>
-                                <td><input type="text" class="form-control name-field" name="equipments[0][name]" required oninput="this.value = this.value.toUpperCase(); syncDescription(this)"></td>
-                                <td><input type="text" class="form-control" name="equipments[0][model_brand]" oninput="this.value = this.value.toUpperCase();"></td>
-                                <td><input type="text" class="form-control" name="equipments[0][serial_number]"></td>
+                               <td>
+                                    <textarea class="form-control auto-resize" name="equipments[0][name]" required oninput="this.value = this.value.toUpperCase(); autoResize(this); syncDescription(this)"></textarea>
+                                </td>
+                                <td>
+                                    <textarea class="form-control auto-resize" name="equipments[0][model_brand]" oninput="this.value = this.value.toUpperCase(); autoResize(this);"></textarea>
+                                </td>
+                                <td>
+                                    <textarea class="form-control auto-resize" name="equipments[0][serial_number]" oninput="autoResize(this);"></textarea>
+                                </td>
                                 <td><input type="number" class="form-control" name="equipments[0][quantity]" required min="1"></td>
                                 <td><button type="button" class="btn btn-sm btn-outline-danger" onclick="removeRow(this)">
                                     <i class="bi bi-x-lg"></i></button></td>
@@ -110,21 +116,22 @@
     }
 
     let rowCount = 1;
-    function addRow() {
+        function addRow() {
         const tbody = document.querySelector('#equipments-table tbody');
         const row = document.createElement('tr');
+
         row.innerHTML = `
-            <td><input type="text" class="form-control name-field" name="equipments[${rowCount}][name]" required oninput="syncDescription(this)"></td>
-            <td><input type="text" class="form-control" name="equipments[${rowCount}][model_brand]"></td>
-            <td><input type="text" class="form-control" name="equipments[${rowCount}][serial_number]"></td>
+            <td><textarea class="form-control auto-resize name-field" name="equipments[${rowCount}][name]" required oninput="autoResize(this); syncDescription(this)"></textarea></td>
+            <td><textarea class="form-control auto-resize" name="equipments[${rowCount}][model_brand]" oninput="autoResize(this)"></textarea></td>
+            <td><textarea class="form-control auto-resize" name="equipments[${rowCount}][serial_number]" oninput="autoResize(this)"></textarea></td>
             <td><input type="number" class="form-control" name="equipments[${rowCount}][quantity]" required min="1"></td>
             <td><button type="button" class="btn btn-sm btn-outline-danger" onclick="removeRow(this)">
                 <i class="bi bi-x-lg"></i></button></td>
         `;
+        
         tbody.appendChild(row);
         rowCount++;
     }
-
     function removeRow(button) {
         button.closest('tr').remove();
     }
@@ -134,6 +141,17 @@
         const description = row.querySelector('.description-field');
         if (description) description.value = input.value;
     }
+    function autoResize(textarea) {
+        textarea.style.height = 'auto'; // Reset height
+        textarea.style.height = (textarea.scrollHeight) + 'px'; // Set new height
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.auto-resize').forEach(el => {
+            autoResize(el);
+            el.addEventListener('input', () => autoResize(el));
+        });
+    });
 </script>
 
 {{-- Inline Theme Style --}}
@@ -148,6 +166,12 @@
 
     .btn.bg-theme:hover {
         background-color: #7a1234 !important;
+    }
+    .auto-resize {
+        overflow: hidden;
+        resize: none; /* Disable manual resizing if you want fully controlled auto-resize */
+        min-height: 38px; /* Match Bootstrap input height */
+        transition: height 0.2s ease;
     }
 </style>
 @endsection

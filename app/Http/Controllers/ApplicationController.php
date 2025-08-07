@@ -215,7 +215,7 @@ class ApplicationController extends Controller
 
         UserAction::log('Returned', 'Marked accountability form ID ' . $application->id . ' as returned', 'Accountability Form', $application->id);
 
-        return redirect()->back()->with('success', 'Application marked as returned.');
+          return redirect()->route('applications.index')->with('success', 'Application marked as returned.');
     }
 
         public function downloadPDF($id)

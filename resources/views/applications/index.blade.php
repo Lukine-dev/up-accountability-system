@@ -151,7 +151,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="4" class="text-center py-4 text-muted">No forms found</td>
+                            <td colspan="6" class="text-center py-4 text-muted">No forms found</td>
                         </tr>
                     @endforelse
                 </tbody>

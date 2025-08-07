@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container mt-5">
+<div class="container mt-4 p-4">
     <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
         <h2 class="fw-bold mb-0 me-3" style="color: #90143c;">✏️ Edit ICT Device Accountability Form</h2>
 
@@ -51,14 +51,13 @@
                 @foreach($application->equipments as $index => $equipment)
                     <div class="row mb-2 align-items-center">
                         <div class="col-md-3">
-                            <input type="text" name="equipments[{{ $index }}][name]" class="form-control" value="{{ $equipment->name }}" placeholder="Description">
-                        </div>
-        
-                        <div class="col-md-2">
-                            <input type="text" name="equipments[{{ $index }}][model_brand]" class="form-control" value="{{ $equipment->model_brand }}" placeholder="Model/Brand">
+                            <textarea name="equipments[{{ $index }}][name]" class="form-control auto-resize" placeholder="Description" oninput="autoResize(this)">{{ $equipment->name }}</textarea>
                         </div>
                         <div class="col-md-2">
-                            <input type="text" name="equipments[{{ $index }}][serial_number]" class="form-control" value="{{ $equipment->serial_number }}" placeholder="Serial Number">
+                            <textarea name="equipments[{{ $index }}][model_brand]" class="form-control auto-resize" placeholder="Model/Brand" oninput="autoResize(this)">{{ $equipment->model_brand }}</textarea>
+                        </div>
+                        <div class="col-md-2">
+                            <textarea name="equipments[{{ $index }}][serial_number]" class="form-control auto-resize" placeholder="Serial Number" oninput="autoResize(this)">{{ $equipment->serial_number }}</textarea>
                         </div>
                         <div class="col-md-2">
                             <input type="number" name="equipments[{{ $index }}][quantity]" class="form-control" value="{{ $equipment->quantity }}" min="1" placeholder="Qty">
@@ -71,7 +70,6 @@
             </div>
         </div>
 
-
         <div class="d-flex justify-content-end gap-2 mt-4">
             <button type="submit" class="btn text-white" style="background-color: #90143c;">
                 <i class="bi bi-save"></i> Update
@@ -81,7 +79,6 @@
             </a>
         </div>
     </form>
-
 </div>
 
 {{-- JS for dynamic row handling --}}
@@ -95,13 +92,13 @@
 
         row.innerHTML = `
             <div class="col-md-3">
-                <input type="text" name="equipments[${editRowCount}][name]" class="form-control" placeholder="Description">
+                <textarea name="equipments[${editRowCount}][name]" class="form-control auto-resize" placeholder="Description" oninput="autoResize(this)"></textarea>
             </div>
             <div class="col-md-2">
-                <input type="text" name="equipments[${editRowCount}][model_brand]" class="form-control" placeholder="Model/Brand">
+                <textarea name="equipments[${editRowCount}][model_brand]" class="form-control auto-resize" placeholder="Model/Brand" oninput="autoResize(this)"></textarea>
             </div>
             <div class="col-md-2">
-                <input type="text" name="equipments[${editRowCount}][serial_number]" class="form-control" placeholder="Serial Number">
+                <textarea name="equipments[${editRowCount}][serial_number]" class="form-control auto-resize" placeholder="Serial Number" oninput="autoResize(this)"></textarea>
             </div>
             <div class="col-md-2">
                 <input type="number" name="equipments[${editRowCount}][quantity]" class="form-control" placeholder="Qty" min="1">
@@ -136,5 +133,26 @@
         });
     }
 
+    function autoResize(textarea) {
+        textarea.style.height = 'auto';
+        textarea.style.height = textarea.scrollHeight + 'px';
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.auto-resize').forEach(el => {
+            autoResize(el);
+            el.addEventListener('input', () => autoResize(el));
+        });
+    });
 </script>
+
+{{-- Optional CSS to improve textarea UX --}}
+<style>
+    .auto-resize {
+        overflow: hidden;
+        resize: none;
+        min-height: 38px;
+        transition: height 0.2s ease;
+    }
+</style>
 @endsection
