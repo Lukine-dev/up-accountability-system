@@ -13,13 +13,14 @@
             @if($application->status !== 'returned')
                 <form id="return-form-{{ $application->id }}" method="POST" action="{{ route('applications.markReturned', $application->id) }}">
                     @csrf
-                    <button type="button" class="btn btn-warning"
-                        onclick="confirmMarkReturned({{ $application->id }})">
+                    <button type="button" class="btn btn-warning" onclick="confirmMarkReturned({{ $application->id }})">
                         Mark as Returned
                     </button>
                 </form>
             @else
-                <button class="btn btn-success" disabled>Returned</button>
+                <button class="btn btn-success" disabled data-bs-toggle="tooltip" data-bs-placement="top" title="Returned on {{ \Carbon\Carbon::parse($application->returned_at)->format('F j, Y g:i A') }}">
+                    ✅ Returned
+                </button>
             @endif
         </div>
     </div>
@@ -36,82 +37,89 @@
         </div>
     @endif
 
-    <form method="POST" action="{{ route('applications.update', $application->id) }}" class="card shadow-sm border-0 p-4">
-        @csrf
-        @method('PUT')
-
-        {{-- Staff Selector --}}
-        <div class="mb-4">
-            <label for="staff_id" class="form-label fw-semibold">👤 Staff</label>
-            <select name="staff_id" class="form-select @error('staff_id') is-invalid @enderror" required>
-                @foreach($staffs as $staff)
-                    <option value="{{ $staff->id }}" {{ old('staff_id', $application->staff_id) == $staff->id ? 'selected' : '' }}>
-                        {{ $staff->name }} - {{ $staff->designation }}
-                    </option>
-                @endforeach
-            </select>
-            @error('staff_id')
-                <div class="invalid-feedback">{{ $message }}</div>
-            @enderror
+    @if($application->status === 'returned')
+        <div class="alert alert-info text-center">
+            <strong>This application has already been marked as returned.</strong><br>
+            No further edits can be made.
         </div>
+    @else
+        <form method="POST" action="{{ route('applications.update', $application->id) }}" class="card shadow-sm border-0 p-4">
+            @csrf
+            @method('PUT')
 
-        {{-- Equipment List --}}
-        <div class="mb-4">
-            <h5 class="d-flex justify-content-between align-items-center">
-                🖥️ Equipment List
-                <button type="button" class="btn btn-sm btn-outline-dark" onclick="addEditRow()">
-                    <i class="bi bi-plus-circle"></i> Add Equipment
-                </button>
-            </h5>
-
-            <div id="edit-equipments">
-                @foreach(old('equipments', $application->equipments->toArray()) as $index => $equipment)
-                    <div class="row mb-2 align-items-start">
-                        <div class="col-md-3">
-                            <textarea name="equipments[{{ $index }}][name]" class="form-control auto-resize @error("equipments.$index.name") is-invalid @enderror" placeholder="Description" oninput="autoResize(this)">{{ old("equipments.$index.name", $equipment['name']) }}</textarea>
-                            @error("equipments.$index.name")
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-                        <div class="col-md-3">
-                            <textarea name="equipments[{{ $index }}][model_brand]" class="form-control auto-resize @error("equipments.$index.model_brand") is-invalid @enderror" placeholder="Model/Brand" oninput="autoResize(this)">{{ old("equipments.$index.model_brand", $equipment['model_brand']) }}</textarea>
-                            @error("equipments.$index.model_brand")
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-                        <div class="col-md-3">
-                            <textarea name="equipments[{{ $index }}][serial_number]" class="form-control auto-resize @error("equipments.$index.serial_number") is-invalid @enderror" placeholder="Serial Number" oninput="autoResize(this)">{{ old("equipments.$index.serial_number", $equipment['serial_number']) }}</textarea>
-                            @error("equipments.$index.serial_number")
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-                        <div class="col-md-2">
-                            <input type="number" name="equipments[{{ $index }}][quantity]" class="form-control @error("equipments.$index.quantity") is-invalid @enderror" value="{{ old("equipments.$index.quantity", $equipment['quantity']) }}" min="1" placeholder="Qty">
-                            @error("equipments.$index.quantity")
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-                        <div class="col-md-1 text-center">
-                            <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeRow(this)">&times;</button>
-                        </div>
-                    </div>
-                @endforeach
+            {{-- Staff Selector --}}
+            <div class="mb-4">
+                <label for="staff_id" class="form-label fw-semibold">👤 Staff</label>
+                <select name="staff_id" class="form-select @error('staff_id') is-invalid @enderror" required>
+                    @foreach($staffs as $staff)
+                        <option value="{{ $staff->id }}" {{ old('staff_id', $application->staff_id) == $staff->id ? 'selected' : '' }}>
+                            {{ $staff->name }} - {{ $staff->designation }}
+                        </option>
+                    @endforeach
+                </select>
+                @error('staff_id')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
             </div>
-        </div>
 
-        {{-- Submit Buttons --}}
-        <div class="d-flex justify-content-end gap-2 mt-4">
-            <button type="submit" class="btn text-white" style="background-color: #90143c;">
-                <i class="bi bi-save"></i> Update
-            </button>
-            <a href="{{ route('applications.index') }}" class="btn btn-outline-secondary">
-                <i class="bi bi-x-circle"></i> Cancel
-            </a>
-        </div>
-    </form>
+            {{-- Equipment List --}}
+            <div class="mb-4">
+                <h5 class="d-flex justify-content-between align-items-center">
+                    🖥️ Equipment List
+                    <button type="button" class="btn btn-sm btn-outline-dark" onclick="addEditRow()">
+                        <i class="bi bi-plus-circle"></i> Add Equipment
+                    </button>
+                </h5>
+
+                <div id="edit-equipments">
+                    @foreach(old('equipments', $application->equipments->toArray()) as $index => $equipment)
+                        <div class="row mb-2 align-items-start">
+                            <div class="col-md-3">
+                                <textarea name="equipments[{{ $index }}][name]" class="form-control auto-resize @error("equipments.$index.name") is-invalid @enderror" placeholder="Description" oninput="autoResize(this)">{{ old("equipments.$index.name", $equipment['name']) }}</textarea>
+                                @error("equipments.$index.name")
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div class="col-md-3">
+                                <textarea name="equipments[{{ $index }}][model_brand]" class="form-control auto-resize @error("equipments.$index.model_brand") is-invalid @enderror" placeholder="Model/Brand" oninput="autoResize(this)">{{ old("equipments.$index.model_brand", $equipment['model_brand']) }}</textarea>
+                                @error("equipments.$index.model_brand")
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div class="col-md-3">
+                                <textarea name="equipments[{{ $index }}][serial_number]" class="form-control auto-resize @error("equipments.$index.serial_number") is-invalid @enderror" placeholder="Serial Number" oninput="autoResize(this)">{{ old("equipments.$index.serial_number", $equipment['serial_number']) }}</textarea>
+                                @error("equipments.$index.serial_number")
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div class="col-md-2">
+                                <input type="number" name="equipments[{{ $index }}][quantity]" class="form-control @error("equipments.$index.quantity") is-invalid @enderror" value="{{ old("equipments.$index.quantity", $equipment['quantity']) }}" min="1" placeholder="Qty">
+                                @error("equipments.$index.quantity")
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div class="col-md-1 text-center">
+                                <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeRow(this)">&times;</button>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+
+            {{-- Submit Buttons --}}
+            <div class="d-flex justify-content-end gap-2 mt-4">
+                <button type="submit" class="btn text-white" style="background-color: #90143c;">
+                    <i class="bi bi-save"></i> Update
+                </button>
+                <a href="{{ route('applications.index') }}" class="btn btn-outline-secondary">
+                    <i class="bi bi-x-circle"></i> Cancel
+                </a>
+            </div>
+        </form>
+    @endif
 </div>
 
-{{-- JS for dynamic row handling --}}
+{{-- JavaScript --}}
 <script>
     let editRowCount = {{ count(old('equipments', $application->equipments)) }};
 
@@ -149,7 +157,7 @@
     function confirmMarkReturned(applicationId) {
         Swal.fire({
             title: 'Are you sure?',
-            text: "This will mark the application as returned.",
+            text: "This will mark the application as returned. You will not be able to update/edit this form after confirmation.",
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
@@ -173,6 +181,10 @@
             autoResize(el);
             el.addEventListener('input', () => autoResize(el));
         });
+
+        // Enable tooltips
+        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        tooltipTriggerList.map(el => new bootstrap.Tooltip(el));
     });
 </script>
 

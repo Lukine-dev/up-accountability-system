@@ -176,7 +176,7 @@
     <tr>
         <td>Returned Date:
             @if($returnedAt)
-               <strong >  {{ \Carbon\Carbon::parse($returnedAt)->format('F j, Y') }} </strong>
+            <strong>{{ \Carbon\Carbon::parse($returnedAt)->format('F j, Y h:i A') }}</strong>
             @else
                 <strong >Not Returned</strong>
             @endif

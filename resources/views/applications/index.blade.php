@@ -118,35 +118,73 @@
                             <td class="ps-3 text-muted">{{ $application->reference_number }}</td>
                             <td>{{ $application->staff->name }}</td>
                             <td class="text-muted">{{ $application->created_at->format('Y-m-d') }}</td>
-                            <td>
-                                <span class="badge bg-{{ $application->status === 'active' ? 'success' : 'danger' }}">
-                                    {{ ucfirst($application->status) }}
-                                </span>
-
+                            <td>      
+                                          <span class="badge bg-{{ $application->status === 'active' ? 'success' : 'danger' }}">
+                                            {{ ucfirst($application->status) }}
+                                        </span>
+                                        @if($application->status === 'returned' && $application->returned_at)
+                                                <span class="badge bg-danger">
+                                                    {{ \Carbon\Carbon::parse($application->returned_at)->format('F j, Y h:i A') }}
+                                                </span>
+                                        @endif
+  
                             </td>
                             <td>
-                                <div class="btn-group btn-group-sm" role="group">
-                                    <a href="{{ route('applications.show', $application->id) }}" 
-                                       class="btn btn-sm btn-outline-secondary" title="View">
-                                        <i class="bi bi-eye"></i>
-                                    </a>
-                                    <a href="{{ route('applications.edit', $application->id) }}" 
-                                       class="btn btn-sm btn-outline-secondary" title="Edit">
-                                        <i class="bi bi-pencil"></i>
-                                    </a>
-                                    <a href="{{ route('applications.pdf', $application->id) }}" 
-                                       class="btn btn-sm btn-outline-secondary" title="PDF" target="_blank">
-                                        <i class="bi bi-file-pdf"></i>
-                                    </a>
-                                    <a href="{{ route('applications.downloadCSV', $application->id) }}" 
-                                       class="btn btn-sm btn-outline-secondary" title="CSV">
-                                        <i class="bi bi-file-earmark-spreadsheet"></i>
-                                    </a>
-                                    <button class="btn btn-sm btn-outline-danger" 
-                                            data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
-                                </div>
+                                    <div class="d-flex flex-wrap align-items-center justify-content-center">
+                                        {{-- Return Button or Returned Badge --}}
+                                      
+
+                                        {{-- Action Icons --}}
+                                        <div class="btn-group btn-group-sm" role="group">
+                                            <a href="{{ route('applications.show', $application->id) }}" 
+                                            class="btn btn-outline-secondary" 
+                                            title="View" data-bs-toggle="tooltip" data-bs-placement="top">
+                                                <i class="bi bi-eye"></i>
+                                            </a>
+                                            <a href="{{ route('applications.edit', $application->id) }}" 
+                                            class="btn btn-outline-secondary" 
+                                            title="Edit" data-bs-toggle="tooltip" data-bs-placement="top">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                            <a href="{{ route('applications.pdf', $application->id) }}" 
+                                            class="btn btn-outline-secondary" 
+                                            title="Download PDF" target="_blank" data-bs-toggle="tooltip" data-bs-placement="top">
+                                                <i class="bi bi-file-pdf"></i>
+                                            </a>
+                                            <a href="{{ route('applications.downloadCSV', $application->id) }}" 
+                                            class="btn btn-outline-secondary" 
+                                            title="Download CSV" data-bs-toggle="tooltip" data-bs-placement="top">
+                                                <i class="bi bi-file-earmark-spreadsheet"></i>
+                                            </a>
+                                            
+                                        </div>
+
+                                        <div class="mx-5 d-flex justify-content-center gap-3">
+                                            @if($application->status !== 'returned')
+                                            <form id="return-form-{{ $application->id }}" method="POST" action="{{ route('applications.markReturned', $application->id) }}">
+                                                @csrf
+                                                <button type="button"
+                                                    class="btn btn-warning btn-sm d-flex align-items-center justify-content-center"
+                                                    onclick="confirmMarkReturned({{ $application->id }})"
+                                                    data-bs-toggle="tooltip" data-bs-placement="top" title="Mark as Returned">
+                                                    <i class="bi bi-arrow-return-left"></i>
+                                                </button>
+                                            </form>
+                                            @else
+                                                <span class="badge bg-danger text-white d-flex align-items-center gap-1" data-bs-toggle="tooltip" data-bs-placement="top" title="Returned at {{ \Carbon\Carbon::parse($application->returned_at)->format('F j, Y h:i A') }}">
+                                                    <i class="bi bi-calendar-check"></i>
+                                                </span>
+                                            @endif
+
+                                                <button class="btn btn-sm btn-outline-danger" 
+                                                        data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+
+                                        </div>
+                                                
+                                    </div>
+
                             </td>
                         </tr>
                     @empty
@@ -179,4 +217,24 @@
         });
     </script>
 @endif
-@endsection
+
+<script>
+    
+    function confirmMarkReturned(applicationId) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "This will mark the application as returned. You will not be able to update/edit this form after confirmation.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, mark as returned',
+            cancelButtonText: 'Cancel'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById('return-form-' + applicationId).submit();
+            }
+        });
+    }
+</script>
+@endsection 
