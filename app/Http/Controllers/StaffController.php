@@ -67,33 +67,35 @@ class StaffController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            'name' => 'required',
-            'email' => 'required|email|unique:staff',
-            'system_office' => 'required',
-            'designation' => 'required',
-            'department' => 'required',
-            'status' => 'required|in:active,resigned'
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:staff,email',
+            'system_office' => 'required|string|max:255',
+            'designation' => 'required|string|max:255',
+            'department' => 'required|string|max:255',
+            'status' => 'required|in:active,resigned',
+        ], [
+            'name.required' => 'Please enter the staff name.',
+            'email.required' => 'An email is required.',
+            'email.email' => 'Please enter a valid email address.',
+            'email.unique' => 'This email is already registered.',
+            'system_office.required' => 'Please select a system office.',
+            'designation.required' => 'Designation is required.',
+            'department.required' => 'Department cannot be left blank.',
+            'status.required' => 'Please select the employment status.',
+            'status.in' => 'Status must be either active or resigned.',
         ]);
 
-        Staff::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'system_office' => $request->system_office,
-            'designation' => $request->designation,
-            'department' => $request->department,
-            'status' => $request->status
-        ]);
+        Staff::create($validated);
 
-        // Log action
-                UserAction::log(
+        UserAction::log(
             'Created',
-            'Created a new staff record: ' . $request->name,
+            'Created a new staff record: ' . $validated['name'],
             'Staff',
-            null // No specific ID for creation, can be null or omitted
+            null
         );
 
-        return redirect()->route('staff.index')->with('success', 'Staff added successfully');
+        return redirect()->route('staff.index')->with('success', 'Staff added successfully!');
     }
 
         public function show(Staff $staff)
@@ -110,30 +112,39 @@ class StaffController extends Controller
         return view('staff.edit', compact('staff'));
     }
 
-    public function update(Request $request, Staff $staff)
-    {
-        $request->validate([
-            'name' => 'required',
-            'email' => 'required|email|unique:staff,email,' . $staff->id,
-            'system_office' => 'required',
-            'designation' => 'required',
-            'department' => 'required',
-            'status' => 'required|in:active,resigned'
-        ]);
+        
+        public function update(Request $request, Staff $staff)
+        {
+            $validated = $request->validate([
+                'name' => 'required|string|max:255',
+                'email' => 'required|email|unique:staff,email,' . $staff->id,
+                'system_office' => 'required|string|max:255',
+                'designation' => 'required|string|max:255',
+                'department' => 'required|string|max:255',
+                'status' => 'required|in:active,resigned',
+            ], [
+                'name.required' => 'Please enter the staff name.',
+                'email.required' => 'An email is required.',
+                'email.email' => 'Please enter a valid email address.',
+                'email.unique' => 'This email is already registered.',
+                'system_office.required' => 'Please select a system office.',
+                'designation.required' => 'Designation is required.',
+                'department.required' => 'Department cannot be left blank.',
+                'status.required' => 'Please select the employment status.',
+                'status.in' => 'Status must be either active or resigned.',
+            ]);
 
-        $staff->update($request->only(['name', 'email', 'system_office', 'designation', 'department', 'status']));
+            $staff->update($validated);
 
-        // Log action
-        UserAction::log(
-            'Updated',
-            'Updated staff record: ' . $staff->name,
-            'Staff',
-            $staff->id
-        );
+            UserAction::log(
+                'Updated',
+                'Updated staff record: ' . $validated['name'],
+                'Staff',
+                $staff->id
+            );
 
-
-        return redirect()->route('staff.index')->with('success', 'Staff updated successfully');
-    }
+            return redirect()->route('staff.index')->with('success', 'Staff updated successfully!');
+        }
 
         public function destroy(Staff $staff)
         {

@@ -66,25 +66,90 @@
 
             <h5 class="fw-bold mt-3 mb-3" style="color: #90143c;">🖥️ Equipment List</h5>
 
-            @if($application->equipments->count())
-                <div class="table-responsive">
-                    <table class="table table-striped table-bordered align-middle">
-                        <thead class="table-light text-center">
-                            <tr>
-                                <th>Quantity</th>
-                                <th>Description</th>
-                                <th>Model/Brand</th>
-                                <th>Serial Number</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($application->equipments as $equipment)
+        @if($application->equipments->count())
+    <div class="table-responsive">
+        <table class="table table-striped table-bordered align-middle">
+            <thead class="table-light text-center">
+                <tr>
+                    <th style="width: 10%;">Qty</th>
+                    <th style="width: 40%;">Description</th>
+                    <th style="width: 25%;">Model/Brand</th>
+                    <th style="width: 25%;">Serial Number</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($application->equipments as $index => $equipment)
                                 <tr class="text-center">
                                     <td>{{ $equipment->quantity }}</td>
-                                    <td >{{ $equipment->name }}</td>
-                                    <td  >{{ $equipment->model_brand ?? '-' }}</td>
-                                    <td >{{ $equipment->serial_number ?? '-' }}</td>
+
+                                    {{-- Description --}}
+                                    <td>
+                                        @if(strlen($equipment->name) > 40)
+                                            {{ Str::limit($equipment->name, 40) }}
+                                            <a href="#" data-bs-toggle="modal" data-bs-target="#descModal{{ $index }}">See more</a>
+                                        @else
+                                            {{ $equipment->name }}
+                                        @endif
+                                    </td>
+
+                                    {{-- Model/Brand --}}
+                                    <td>
+                                        @if(strlen($equipment->model_brand) > 30)
+                                            {{ Str::limit($equipment->model_brand, 30) }}
+                                            <a href="#" data-bs-toggle="modal" data-bs-target="#modelModal{{ $index }}">See more</a>
+                                        @else
+                                            {{ $equipment->model_brand ?? '-' }}
+                                        @endif
+                                    </td>
+
+                                    {{-- Serial Number --}}
+                                    <td>
+                                        @if(strlen($equipment->serial_number) > 30)
+                                            {{ Str::limit($equipment->serial_number, 30) }}
+                                            <a href="#" data-bs-toggle="modal" data-bs-target="#serialModal{{ $index }}">See more</a>
+                                        @else
+                                            {{ $equipment->serial_number ?? '-' }}
+                                        @endif
+                                    </td>
                                 </tr>
+
+                                {{-- Modals --}}
+                                <div class="modal fade" id="descModal{{ $index }}" tabindex="-1" aria-labelledby="descModalLabel{{ $index }}" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal-content">
+                                            <div class="modal-header bg-primary text-white">
+                                                <h5 class="modal-title" id="descModalLabel{{ $index }}">Full Description</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                            </div>
+                                            <div class="modal-body">{{ $equipment->name }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="modal fade" id="modelModal{{ $index }}" tabindex="-1" aria-labelledby="modelModalLabel{{ $index }}" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal-content">
+                                            <div class="modal-header bg-primary text-white">
+                                                <h5 class="modal-title" id="modelModalLabel{{ $index }}">Full Model/Brand</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                            </div>
+                                            <div class="modal-body">{{ $equipment->model_brand }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="modal fade" id="serialModal{{ $index }}" tabindex="-1" aria-labelledby="serialModalLabel{{ $index }}" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal-content">
+                                            <div class="modal-header bg-primary text-white">
+                                                <h5 class="modal-title" id="serialModalLabel{{ $index }}">Full Serial Number</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                            </div>
+                                            <div class="modal-body">{{ $equipment->serial_number }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+
                             @endforeach
                         </tbody>
                     </table>
@@ -92,15 +157,65 @@
             @else
                 <p class="text-muted fst-italic">No equipment listed for this application.</p>
             @endif
+
         </div>
     </div>
 
 </div>
-
 <style>
-    td,th{
-        white-space: nowrap ;
-        max-width: 30%;
+    /* Table styling */
+    .table thead th {
+        background-color: #f8f9fa;
+        color: #90143c;
+        font-weight: bold;
+        border-bottom: 2px solid #dee2e6;
+    }
+
+    .table tbody tr:hover {
+        background-color: #f3f3f3;
+    }
+
+    /* Modal header with custom theme */
+    .modal-header.bg-primary {
+        background-color: #90143c !important;
+        border-bottom: 1px solid #891336;
+    }
+
+    .modal-title {
+        font-weight: bold;
+    }
+
+    /* Add spacing between modals */
+    .modal + .modal {
+        margin-top: 10px;
+    }
+
+    /* Responsive modal body text */
+    .modal-body {
+        word-wrap: break-word;
+        font-size: 1rem;
+    }
+
+    /* Optional: Add padding to modal content */
+    .modal-content {
+        padding: 0.5rem;
+    }
+
+    /* Highlight quantity cell */
+    td:first-child {
+        font-weight: bold;
+        background-color: #fdf0f2;
+    }
+
+    /* Responsive tweaks */
+    @media (max-width: 576px) {
+        .table th, .table td {
+            font-size: 0.875rem;
+        }
+
+        .modal-body {
+            font-size: 0.9rem;
+        }
     }
 </style>
 @endsection

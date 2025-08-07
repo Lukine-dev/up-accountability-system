@@ -9,19 +9,28 @@
         </a>
     </div>
 
+    @if ($errors->any())
+        <div class="alert alert-danger">
+            <strong><i class="bi bi-exclamation-triangle-fill"></i> Please fix the following issues:</strong>
+            <ul class="mb-0 mt-2">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
     <form method="POST" action="{{ route('applications.store') }}">
         @csrf
 
         {{-- Staff Selection --}}
         <div class="card shadow-sm mb-4 border-0">
-            <div class="card-header bg-theme text-white fw-semibold">
-                👤 Select Staff
-            </div>
+            <div class="card-header bg-theme text-white fw-semibold">👤 Select Staff</div>
             <div class="card-body">
-                <select name="staff_id" id="staff_id" class="form-select mb-3" required onchange="fillStaffInfo()">
+                <select name="staff_id" id="staff_id" class="form-select mb-3 @error('staff_id') is-invalid @enderror" required onchange="fillStaffInfo()">
                     <option value="" disabled selected>-- Choose a Staff Member --</option>
                     @foreach ($staffs as $staff)
-                        <option value="{{ $staff->id }}"
+                        <option value="{{ $staff->id }}" {{ old('staff_id') == $staff->id ? 'selected' : '' }}
                             data-name="{{ $staff->name }}"
                             data-system_office="{{ $staff->system_office }}"
                             data-designation="{{ $staff->designation }}"
@@ -30,6 +39,9 @@
                         </option>
                     @endforeach
                 </select>
+                @error('staff_id')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
 
                 <div class="row">
                     <div class="col-md-6 mb-3">
@@ -52,7 +64,7 @@
             </div>
         </div>
 
-        {{-- Equipments --}}
+        {{-- Equipment Table --}}
         <div class="card shadow-sm mb-4 border-0">
             <div class="card-header d-flex justify-content-between align-items-center bg-theme text-white fw-semibold">
                 <span>🧰 Register Equipments</span>
@@ -73,20 +85,50 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                               <td>
-                                    <textarea class="form-control auto-resize" name="equipments[0][name]" required oninput="this.value = this.value.toUpperCase(); autoResize(this); syncDescription(this)"></textarea>
-                                </td>
-                                <td>
-                                    <textarea class="form-control auto-resize" name="equipments[0][model_brand]" oninput="this.value = this.value.toUpperCase(); autoResize(this);"></textarea>
-                                </td>
-                                <td>
-                                    <textarea class="form-control auto-resize" name="equipments[0][serial_number]" oninput="autoResize(this);"></textarea>
-                                </td>
-                                <td><input type="number" class="form-control" name="equipments[0][quantity]" required min="1"></td>
-                                <td><button type="button" class="btn btn-sm btn-outline-danger" onclick="removeRow(this)">
-                                    <i class="bi bi-x-lg"></i></button></td>
-                            </tr>
+                            @php $oldEquipments = old('equipments') ?? [['name' => '', 'model_brand' => '', 'serial_number' => '', 'quantity' => 1]]; @endphp
+                            @foreach ($oldEquipments as $i => $equipment)
+                                <tr>
+                                    <td>
+                                        <textarea class="form-control auto-resize @error("equipments.$i.name") is-invalid @enderror"
+                                                  name="equipments[{{ $i }}][name]"
+                                                  required
+                                                  oninput="this.value = this.value.toUpperCase(); autoResize(this); syncDescription(this)">{{ old("equipments.$i.name") }}</textarea>
+                                        @error("equipments.$i.name")
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </td>
+                                    <td>
+                                        <textarea class="form-control auto-resize @error("equipments.$i.model_brand") is-invalid @enderror"
+                                                  name="equipments[{{ $i }}][model_brand]"
+                                                  oninput="this.value = this.value.toUpperCase(); autoResize(this);">{{ old("equipments.$i.model_brand") }}</textarea>
+                                        @error("equipments.$i.model_brand")
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </td>
+                                    <td>
+                                        <textarea class="form-control auto-resize @error("equipments.$i.serial_number") is-invalid @enderror"
+                                                  name="equipments[{{ $i }}][serial_number]"
+                                                  oninput="autoResize(this);">{{ old("equipments.$i.serial_number") }}</textarea>
+                                        @error("equipments.$i.serial_number")
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </td>
+                                    <td>
+                                        <input type="number" class="form-control @error("equipments.$i.quantity") is-invalid @enderror"
+                                               name="equipments[{{ $i }}][quantity]"
+                                               value="{{ old("equipments.$i.quantity", 1) }}"
+                                               min="1" required>
+                                        @error("equipments.$i.quantity")
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </td>
+                                    <td>
+                                        <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeRow(this)">
+                                            <i class="bi bi-x-lg"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            @endforeach
                         </tbody>
                     </table>
                 </div>
@@ -115,35 +157,47 @@
         document.getElementById('staff_department').value = selected.getAttribute('data-department') || '';
     }
 
-    let rowCount = 1;
-        function addRow() {
+    let rowCount = {{ count($oldEquipments) }};
+    function addRow() {
         const tbody = document.querySelector('#equipments-table tbody');
         const row = document.createElement('tr');
 
         row.innerHTML = `
-            <td><textarea class="form-control auto-resize name-field" name="equipments[${rowCount}][name]" required oninput="autoResize(this); syncDescription(this)"></textarea></td>
-            <td><textarea class="form-control auto-resize" name="equipments[${rowCount}][model_brand]" oninput="autoResize(this)"></textarea></td>
-            <td><textarea class="form-control auto-resize" name="equipments[${rowCount}][serial_number]" oninput="autoResize(this)"></textarea></td>
-            <td><input type="number" class="form-control" name="equipments[${rowCount}][quantity]" required min="1"></td>
-            <td><button type="button" class="btn btn-sm btn-outline-danger" onclick="removeRow(this)">
-                <i class="bi bi-x-lg"></i></button></td>
+            <td>
+                <textarea class="form-control auto-resize" name="equipments[${rowCount}][name]" required oninput="this.value = this.value.toUpperCase(); autoResize(this); syncDescription(this)"></textarea>
+            </td>
+            <td>
+                <textarea class="form-control auto-resize" name="equipments[${rowCount}][model_brand]" oninput="this.value = this.value.toUpperCase(); autoResize(this);"></textarea>
+            </td>
+            <td>
+                <textarea class="form-control auto-resize" name="equipments[${rowCount}][serial_number]" oninput="autoResize(this);"></textarea>
+            </td>
+            <td>
+                <input type="number" class="form-control" name="equipments[${rowCount}][quantity]" required min="1" value="1">
+            </td>
+            <td>
+                <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeRow(this)">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </td>
         `;
-        
         tbody.appendChild(row);
         rowCount++;
     }
+
     function removeRow(button) {
         button.closest('tr').remove();
+    }
+
+    function autoResize(textarea) {
+        textarea.style.height = 'auto';
+        textarea.style.height = (textarea.scrollHeight) + 'px';
     }
 
     function syncDescription(input) {
         const row = input.closest('tr');
         const description = row.querySelector('.description-field');
         if (description) description.value = input.value;
-    }
-    function autoResize(textarea) {
-        textarea.style.height = 'auto'; // Reset height
-        textarea.style.height = (textarea.scrollHeight) + 'px'; // Set new height
     }
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -154,23 +208,21 @@
     });
 </script>
 
-{{-- Inline Theme Style --}}
+{{-- Inline Theme --}}
 <style>
     .bg-theme {
         background-color: #90143c !important;
     }
-
     .text-theme {
         color: #90143c !important;
     }
-
     .btn.bg-theme:hover {
         background-color: #7a1234 !important;
     }
     .auto-resize {
         overflow: hidden;
-        resize: none; /* Disable manual resizing if you want fully controlled auto-resize */
-        min-height: 38px; /* Match Bootstrap input height */
+        resize: none;
+        min-height: 38px;
         transition: height 0.2s ease;
     }
 </style>

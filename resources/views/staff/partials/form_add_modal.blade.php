@@ -15,34 +15,70 @@
         <!-- Modal Body -->
         <div class="modal-body bg-light">
           <div class="row g-3">
+
             <div class="col-md-6 form-floating">
-              <input type="text" class="form-control" id="name" name="name" placeholder="Name" required>
+              <input type="text" class="form-control @error('name') is-invalid @enderror"
+                     id="name" name="name" placeholder="Full Name"
+                     value="{{ old('name') }}" required>
               <label for="name">Full Name</label>
+              @error('name')
+                <div class="invalid-feedback">{{ $message }}</div>
+              @enderror
             </div>
+
             <div class="col-md-6 form-floating">
-              <input type="email" class="form-control" id="email" name="email" placeholder="Email" required>
+              <input type="email" class="form-control @error('email') is-invalid @enderror"
+                     id="email" name="email" placeholder="Email Address"
+                     value="{{ old('email') }}" required>
               <label for="email">Email Address</label>
+              @error('email')
+                <div class="invalid-feedback">{{ $message }}</div>
+              @enderror
             </div>
+
             <div class="col-md-6 form-floating">
-              <input type="text" class="form-control" id="system_office" name="system_office" placeholder="System Office">
+              <input type="text" class="form-control @error('system_office') is-invalid @enderror"
+                     id="system_office" name="system_office" placeholder="System Office"
+                     value="{{ old('system_office') }}">
               <label for="system_office">System Office</label>
+              @error('system_office')
+                <div class="invalid-feedback">{{ $message }}</div>
+              @enderror
             </div>
+
             <div class="col-md-6 form-floating">
-              <input type="text" class="form-control" id="designation" name="designation" placeholder="Designation">
+              <input type="text" class="form-control @error('designation') is-invalid @enderror"
+                     id="designation" name="designation" placeholder="Designation"
+                     value="{{ old('designation') }}">
               <label for="designation">Designation</label>
+              @error('designation')
+                <div class="invalid-feedback">{{ $message }}</div>
+              @enderror
             </div>
+
             <div class="col-md-12 form-floating">
-              <input type="text" class="form-control" id="department" name="department" placeholder="Department">
+              <input type="text" class="form-control @error('department') is-invalid @enderror"
+                     id="department" name="department" placeholder="Department"
+                     value="{{ old('department') }}">
               <label for="department">Department / Unit</label>
+              @error('department')
+                <div class="invalid-feedback">{{ $message }}</div>
+              @enderror
             </div>
+
             <div class="col-md-6 form-floating">
-              <select class="form-select" id="status" name="status" required>
-                <option value="" disabled selected>Choose...</option>
-                <option value="active">Active</option>
-                <option value="resigned">Resigned</option>
+              <select class="form-select @error('status') is-invalid @enderror"
+                      id="status" name="status" required>
+                <option value="" disabled {{ old('status') ? '' : 'selected' }}>Choose...</option>
+                <option value="active" {{ old('status') === 'active' ? 'selected' : '' }}>Active</option>
+                <option value="resigned" {{ old('status') === 'resigned' ? 'selected' : '' }}>Resigned</option>
               </select>
               <label for="status">Employment Status</label>
+              @error('status')
+                <div class="invalid-feedback">{{ $message }}</div>
+              @enderror
             </div>
+
           </div>
         </div>
 

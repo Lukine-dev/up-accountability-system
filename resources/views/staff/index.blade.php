@@ -181,4 +181,19 @@
         });
     });
 </script>
+@if ($errors->any())
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            Swal.fire({
+                title: 'Validation Error',
+                html: `{!! implode('<br>', $errors->all()) !!}`,
+                icon: 'error',
+                confirmButtonColor: '#90143c',
+                customClass: {
+                    popup: 'rounded-4 shadow'
+                }
+            });
+        });
+    </script>
+@endif
 @endsection

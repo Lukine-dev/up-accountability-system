@@ -24,21 +24,38 @@
         </div>
     </div>
 
+    {{-- Error Display --}}
+    @if ($errors->any())
+        <div class="alert alert-danger">
+            <strong>There were some problems with your input:</strong>
+            <ul class="mb-0 mt-2">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
     <form method="POST" action="{{ route('applications.update', $application->id) }}" class="card shadow-sm border-0 p-4">
         @csrf
         @method('PUT')
 
+        {{-- Staff Selector --}}
         <div class="mb-4">
             <label for="staff_id" class="form-label fw-semibold">👤 Staff</label>
-            <select name="staff_id" class="form-select" required>
+            <select name="staff_id" class="form-select @error('staff_id') is-invalid @enderror" required>
                 @foreach($staffs as $staff)
-                    <option value="{{ $staff->id }}" {{ $application->staff_id == $staff->id ? 'selected' : '' }}>
+                    <option value="{{ $staff->id }}" {{ old('staff_id', $application->staff_id) == $staff->id ? 'selected' : '' }}>
                         {{ $staff->name }} - {{ $staff->designation }}
                     </option>
                 @endforeach
             </select>
+            @error('staff_id')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
         </div>
 
+        {{-- Equipment List --}}
         <div class="mb-4">
             <h5 class="d-flex justify-content-between align-items-center">
                 🖥️ Equipment List
@@ -48,19 +65,31 @@
             </h5>
 
             <div id="edit-equipments">
-                @foreach($application->equipments as $index => $equipment)
+                @foreach(old('equipments', $application->equipments->toArray()) as $index => $equipment)
                     <div class="row mb-2 align-items-start">
                         <div class="col-md-3">
-                            <textarea name="equipments[{{ $index }}][name]" class="form-control auto-resize" placeholder="Description" oninput="autoResize(this)">{{ $equipment->name }}</textarea>
+                            <textarea name="equipments[{{ $index }}][name]" class="form-control auto-resize @error("equipments.$index.name") is-invalid @enderror" placeholder="Description" oninput="autoResize(this)">{{ old("equipments.$index.name", $equipment['name']) }}</textarea>
+                            @error("equipments.$index.name")
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
                         <div class="col-md-3">
-                            <textarea name="equipments[{{ $index }}][model_brand]" class="form-control auto-resize" placeholder="Model/Brand" oninput="autoResize(this)">{{ $equipment->model_brand }}</textarea>
+                            <textarea name="equipments[{{ $index }}][model_brand]" class="form-control auto-resize @error("equipments.$index.model_brand") is-invalid @enderror" placeholder="Model/Brand" oninput="autoResize(this)">{{ old("equipments.$index.model_brand", $equipment['model_brand']) }}</textarea>
+                            @error("equipments.$index.model_brand")
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
                         <div class="col-md-3">
-                            <textarea name="equipments[{{ $index }}][serial_number]" class="form-control auto-resize" placeholder="Serial Number" oninput="autoResize(this)">{{ $equipment->serial_number }}</textarea>
+                            <textarea name="equipments[{{ $index }}][serial_number]" class="form-control auto-resize @error("equipments.$index.serial_number") is-invalid @enderror" placeholder="Serial Number" oninput="autoResize(this)">{{ old("equipments.$index.serial_number", $equipment['serial_number']) }}</textarea>
+                            @error("equipments.$index.serial_number")
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
                         <div class="col-md-2">
-                            <input type="number" name="equipments[{{ $index }}][quantity]" class="form-control" value="{{ $equipment->quantity }}" min="1" placeholder="Qty">
+                            <input type="number" name="equipments[{{ $index }}][quantity]" class="form-control @error("equipments.$index.quantity") is-invalid @enderror" value="{{ old("equipments.$index.quantity", $equipment['quantity']) }}" min="1" placeholder="Qty">
+                            @error("equipments.$index.quantity")
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
                         <div class="col-md-1 text-center">
                             <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeRow(this)">&times;</button>
@@ -70,6 +99,7 @@
             </div>
         </div>
 
+        {{-- Submit Buttons --}}
         <div class="d-flex justify-content-end gap-2 mt-4">
             <button type="submit" class="btn text-white" style="background-color: #90143c;">
                 <i class="bi bi-save"></i> Update
@@ -83,7 +113,7 @@
 
 {{-- JS for dynamic row handling --}}
 <script>
-    let editRowCount = {{ $application->equipments->count() }};
+    let editRowCount = {{ count(old('equipments', $application->equipments)) }};
 
     function addEditRow() {
         const container = document.getElementById('edit-equipments');
@@ -146,7 +176,7 @@
     });
 </script>
 
-{{-- Optional CSS to improve textarea UX --}}
+{{-- CSS --}}
 <style>
     .auto-resize {
         overflow: hidden;

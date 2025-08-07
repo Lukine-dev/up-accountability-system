@@ -111,6 +111,21 @@
 
     @stack('styles')
 </head>
+{{-- Alerts --}}
+@if ($errors->any())
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            Swal.fire({
+                icon: 'error',
+                title: 'Validation Error',
+                html: `{!! implode('<br>', $errors->all()) !!}`,
+                confirmButtonColor: '#90143c',
+            });
+        });
+    </script>
+@endif
+
+
 <body>
     <div id="app">
         @yield('before-content')
@@ -226,7 +241,6 @@
                 });
             });
         </script>
-        
     @endif
 
 

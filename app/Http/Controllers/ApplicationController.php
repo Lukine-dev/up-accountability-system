@@ -85,7 +85,16 @@ class ApplicationController extends Controller
             'staff_id' => 'required|exists:staff,id',
             'equipments.*.name' => 'required|string|max:255',
             'equipments.*.quantity' => 'required|integer|min:1',
-            'status' => 'nullable|in:pending,approved,denied,returned',
+            'status' => 'nullable|in:active,returned',
+        ],[
+            'staff_id.required' => 'Please select a staff member.',
+            'staff_id.exists' => 'The selected staff member does not exist.',
+            'equipments.*.name.required' => 'Each equipment must have a name.',
+            'equipments.*.name.max' => 'Each equipment name must not exceed 255 characters.',
+            'equipments.*.quantity.required' => 'Each equipment must have a quantity.',
+            'equipments.*.quantity.integer' => 'Equipment quantity must be an integer.',
+            'equipments.*.quantity.min' => 'Each equipment quantity must be at least 1.',
+            'status.in' => 'Invalid status selected.',
         ]);
 
         $reference = Application::generateReferenceNumber();
@@ -137,14 +146,22 @@ class ApplicationController extends Controller
 
  public function update(Request $request, $id)
 {
-    $request->validate([
-        'staff_id' => 'required|exists:staff,id',
-        'status' => 'nullable|in:pending,approved,denied,returned',
-        'returned_at' => 'nullable|date',
-        'equipments.*.name' => 'required|string|max:255',
-        'equipments.*.quantity' => 'required|integer|min:1',
-    ]);
-
+   $request->validate([
+            'staff_id' => 'required|exists:staff,id',
+            'equipments.*.name' => 'required|string|max:255',
+            'equipments.*.quantity' => 'required|integer|min:1',
+            'status' => 'nullable|in:active,returned',
+        ],[
+            'staff_id.required' => 'Please select a staff member.',
+            'staff_id.exists' => 'The selected staff member does not exist.',
+            'equipments.*.name.required' => 'Each equipment must have a name.',
+            'equipments.*.name.max' => 'Each equipment name must not exceed 255 characters.',
+            'equipments.*.quantity.required' => 'Each equipment must have a quantity.',
+            'equipments.*.quantity.integer' => 'Equipment quantity must be an integer.',
+            'equipments.*.quantity.min' => 'Each equipment quantity must be at least 1.',
+            'status.in' => 'Invalid status selected.',
+        ]);
+        
     $application = Application::findOrFail($id);
 
     // Update the application’s data

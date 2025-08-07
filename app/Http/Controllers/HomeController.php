@@ -14,15 +14,26 @@ class HomeController extends Controller
             public function index()
         {
             return view('home', [
-                'totalStaff' => Staff::count(),
+               'totalStaff' => Staff::count(),
                 'activeStaff' => Staff::where('status', 'active')->count(),
                 'resignedStaff' => Staff::where('status', 'resigned')->count(),
+                
                 'totalApplications' => \App\Models\Application::whereHas('staff', function ($query) {
                     $query->where('status', 'active');
                 })->count(),
+
+                'activeApplications' => \App\Models\Application::where('status', 'issued')
+                    ->whereHas('staff', fn ($q) => $q->where('status', 'active'))
+                    ->count(),
+
+                'returnedApplications' => \App\Models\Application::where('status', 'returned')
+                    ->whereHas('staff', fn ($q) => $q->where('status', 'active'))
+                    ->count(),
+
                 'totalEquipmentReleased' => \App\Models\Application::whereHas('staff', function ($query) {
                     $query->where('status', 'active');
                 })->with('equipments')->get()->flatMap->equipments->sum('quantity'),
+
                 'departments' => Staff::whereNotNull('department')->distinct()->pluck('department'),
                 'resignedEmployees' => Staff::where('status', 'resigned')->latest('updated_at')->take(10)->get(),
                 'latestEmployees' => Staff::where('status', 'active')->latest('created_at')->take(10)->get(),

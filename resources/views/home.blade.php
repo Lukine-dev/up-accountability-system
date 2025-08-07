@@ -197,166 +197,116 @@
             </div>
         </div>
 
+<!-- Metrics Grid -->
+<div class="row g-4 mb-4">
+    <!-- Staff Metrics -->
+    <div class="col-md-6">
+        <div class="card h-auto">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Metrics</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-4">
+                    <div class="card h-auto" onclick="location.href='{{ route('applications.index') }}'" style="cursor: pointer;">
+                        <div class="metric-card" style="border-top: 4px solid var(--primary);">
+                            <div class="metric-icon bg-primary-light text-primary">
+                                <i class="bi bi-file-earmark-text"></i>
+                            </div>
+                            <div>
+                                <div class="metric-value">{{ $totalApplications }}</div>
+                                <div class="metric-label">Accountability Forms</div>
 
-    <!-- Metrics Grid -->
-    <div class="row g-4 mb-4">
-        <!-- Staff Metrics -->
-        <div class="col-md-6">
-            <div class="card h-auto ">
-                <div class="card-header d-flex justify-content-between align-items-center " >
-                    <h5 class="mb-0">Metrics</h5>
-                </div>
-                <div class="card-body">
-                    <div class="row g-3">
-                        <div class="col-md-4">
-                            <div class="metric-card">
-                                <div class="metric-icon bg-primary-light text-primary">
-                                    <i class="bi bi-people-fill"></i>
-                                </div>
-                                <div>
-                                    <div class="metric-value">{{ $totalStaff }}</div>
-                                    <div class="metric-label">Total Staff</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="metric-card">
-                                <div class="metric-icon bg-success bg-opacity-10 text-success">
-                                    <i class="bi bi-person-check-fill"></i>
-                                </div>
-                                <div>
-                                    <div class="metric-value">{{ $activeStaff }}</div>
-                                    <div class="metric-label">Active</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="metric-card">
-                                <div class="metric-icon bg-danger bg-opacity-10 text-danger">
-                                    <i class="bi bi-person-dash-fill"></i>
-                                </div>
-                                <div>
-                                    <div class="metric-value">{{ $resignedStaff }}</div>
-                                    <div class="metric-label">Resigned</div>
+                                <!-- Breakdown -->
+                                <div class="text-muted small mt-1">
+                                    <span class="me-3">
+                                        <i class="bi bi-check-circle-fill text-success me-1"></i>
+                                        {{ $activeApplications }} Active
+                                    </span>
+                                    <span>
+                                        <i class="bi bi-arrow-counterclockwise text-danger me-1"></i>
+                                        {{ $returnedApplications }} Returned
+                                    </span>
                                 </div>
                             </div>
                         </div>
                     </div>
+                </div>
 
-                <div class="row mt-1">
-                     <div class="col-md-12">
-                        <div class="card h-auto " onclick="location.href='{{ route('applications.index') }}'" style="cursor: pointer;">
-                            <div class="metric-card" style="border-top: 4px solid var(--primary);">
-                                <div class="metric-icon bg-primary-light text-primary">
-                                    <i class="bi bi-file-earmark-text"></i>
-                                </div>
-                                <div>
-                                    <div class="metric-value">{{ $totalApplications }}</div>
-                                    <div class="metric-label">Accountability Forms</div>
-                                </div>
+                <!-- Staff Breakdown Cards -->
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <div class="metric-card">
+                            <div class="metric-icon bg-primary-light text-primary">
+                                <i class="bi bi-people-fill"></i>
+                            </div>
+                            <div>
+                                <div class="metric-value">{{ $totalStaff }}</div>
+                                <div class="metric-label">Total Staff</div>
                             </div>
                         </div>
                     </div>
-           
-                    {{-- <div class="col-md-6">
-                        <div class="card h-auto" onclick="location.href='{{ route('equipment.index') }}'" style="cursor: pointer;">
-                                <div class="metric-card" style="border-top: 4px solid var(--primary);">
-                                    <div class="metric-icon bg-primary-light text-primary">
-                                        <i class="bi bi-box-seam"></i>
-                                    </div>
-                                    <div>
-                                        <div class="metric-value">{{ $totalEquipmentReleased }}</div>
-                                        <div class="metric-label">Equipment Released</div>
-                                    </div>
-                                </div>   
-                               </div>
-                    </div> --}}
-                </div>
-                   
-                             
-
-                </div>
+                    <div class="col-md-4">
+                        <div class="metric-card">
+                            <div class="metric-icon bg-success bg-opacity-10 text-success">
+                                <i class="bi bi-person-check-fill"></i>
+                            </div>
+                            <div>
+                                <div class="metric-value">{{ $activeStaff }}</div>
+                                <div class="metric-label">Active</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="metric-card">
+                            <div class="metric-icon bg-danger bg-opacity-10 text-danger">
+                                <i class="bi bi-person-dash-fill"></i>
+                            </div>
+                            <div>
+                                <div class="metric-value">{{ $resignedStaff }}</div>
+                                <div class="metric-label">Resigned</div>
+                            </div>
+                        </div>
+                    </div>
+                </div> <!-- end row -->
             </div>
         </div>
-
-        <!-- Other Metrics -->
-        <div class="col-md-6">
-                <div class="">
-    
-                    <a href="{{ route('staff.index') }}" class="nav-card text-decoration-none mb-3">
-                        <div class="nav-icon">
-                            <i class="bi bi-people-fill"></i>
-                        </div>
-                        <div>
-                            <div class="fw-medium">Staff List</div>
-                            <div class="text-muted small">Manage all staff members</div>
-                        </div>
-                    </a>
-     
-                    <a href="{{ route('applications.index') }}" class="nav-card text-decoration-none mb-3">
-                        <div class="nav-icon">
-                            <i class="bi bi-journal-text"></i>
-                        </div>
-                        <div>
-                            <div class="fw-medium">Accountability Forms</div>
-                            <div class="text-muted small">View all forms</div>
-                        </div>
-                    </a>
-      
-                    <a href="{{ route('equipment.index') }}" class="nav-card text-decoration-none ">
-                        <div class="nav-icon">
-                            <i class="bi bi-box-seam"></i>
-                        </div>
-                        <div>
-                            <div class="fw-medium">Equipment</div>
-                            <div class="text-muted small">Track released items</div>
-                        </div>
-                    </a>
-
-            </div>
-        </div>
-
-   
-
-             {{-- <div class="col-md-6">
-                 
-    <!-- System Users -->
-                <div class="card mb-4">
-                    <div class="card-header">
-                        <h5 class="mb-0">System Users</h5>
-                    </div>
-                    <div class="card-body p-0">
-                        <div class="table-responsive">
-                            <table class="data-table">
-                                <thead>
-                                    <tr>
-                                        <th>#</th>
-                                        <th>Name</th>
-                                        <th>Email</th>
-                                        <th>Registered</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($users as $user)
-                                    <tr>
-                                        <td>{{ $loop->iteration }}</td>
-                                        <td>{{ $user->name }}</td>
-                                        <td>{{ $user->email }}</td>
-                                        <td>{{ $user->created_at->format('Y-m-d H:i') }}</td>
-                                    </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    <div class="card-footer bg-white">
-                        {{ $users->links('vendor.pagination.bootstrap-5') }}
-                    </div>
-                </div>
-            </div> --}}
     </div>
-    
 
+    <!-- Navigation Cards -->
+    <div class="col-md-6">
+        <div class="d-flex flex-column gap-3 ">
+            <a href="{{ route('staff.index') }}" class="nav-card text-decoration-none mt-3">
+                <div class="nav-icon">
+                    <i class="bi bi-people-fill"></i>
+                </div>
+                <div>
+                    <div class="fw-medium">Staff List</div>
+                    <div class="text-muted small">Manage all staff members</div>
+                </div>
+            </a>
+
+            <a href="{{ route('applications.index') }}" class="nav-card text-decoration-none">
+                <div class="nav-icon">
+                    <i class="bi bi-journal-text"></i>
+                </div>
+                <div>
+                    <div class="fw-medium">Accountability Forms</div>
+                    <div class="text-muted small">View all forms</div>
+                </div>
+            </a>
+
+            <a href="{{ route('equipment.index') }}" class="nav-card text-decoration-none">
+                <div class="nav-icon">
+                    <i class="bi bi-box-seam"></i>
+                </div>
+                <div>
+                    <div class="fw-medium">Equipment</div>
+                    <div class="text-muted small">Track released items</div>
+                </div>
+            </a>
+        </div>
+    </div>
+</div>
 </div>
 
 <!-- Bootstrap Icons -->
