@@ -4,6 +4,7 @@
 @php
     $hasFilters = request()->filled('search') || request()->filled('staff') || request()->filled('date') || request()->filled('designation') || request()->filled('department');
 @endphp
+{{-- resources/views/layouts/app.blade.php --}}
 
 <div class="container py-4">
     {{-- Header with Actions --}}
@@ -237,4 +238,5 @@
         });
     }
 </script>
+
 @endsection 

@@ -122,7 +122,7 @@ class ApplicationController extends Controller
 
 
         return redirect()->route('applications.index')
-            ->with('success', 'Application submitted successfully!');
+            ->with('success', 'Accountability Form submitted successfully!');
     }
 
     // public function show($id)
@@ -161,7 +161,7 @@ class ApplicationController extends Controller
             'equipments.*.quantity.min' => 'Each equipment quantity must be at least 1.',
             'status.in' => 'Invalid status selected.',
         ]);
-        
+
     $application = Application::findOrFail($id);
 
     // Update the application’s data
@@ -203,7 +203,7 @@ class ApplicationController extends Controller
         // Log action
         UserAction::log('Updated', 'Updated accountability form ID: ' . $application->id, 'Accountability Form', $application->id);
 
-        return redirect()->route('applications.index')->with('success', 'Application updated successfully.');
+        return redirect()->route('applications.index')->with('success', 'Accountability Form updated successfully.');
     }
 
 
@@ -217,11 +217,11 @@ class ApplicationController extends Controller
         // When deleting
         UserAction::log('Deleted', 'Deleted accountability form ID: ' . $application->id, 'Accountability Form', $application->id);
 
-        return redirect()->route('applications.index')->with('success', 'Application deleted.');
+        return redirect()->route('applications.index')->with('success', 'Accountability Form deleted.');
     }
 
 
-    public function markReturned($id)
+        public function markReturned($id)
     {
         $application = Application::findOrFail($id);
 
@@ -230,9 +230,17 @@ class ApplicationController extends Controller
             'returned_at' => now(),
         ]);
 
-        UserAction::log('Returned', 'Marked accountability form ID ' . $application->id . ' as returned', 'Accountability Form', $application->id);
+        UserAction::log(
+            'Returned',
+            'Marked accountability form ID ' . $application->id . ' as returned',
+            'Accountability Form',
+            $application->id
+        );
 
-          return redirect()->route('applications.index')->with('success', 'Application marked as returned.');
+        return view('applications.returned', [
+            'id' => $application->id,
+            'successMessage' => 'Accountability Form marked as returned.'
+        ]);
     }
 
         public function downloadPDF($id)
