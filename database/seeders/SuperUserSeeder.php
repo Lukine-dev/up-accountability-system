@@ -16,8 +16,8 @@ class SuperUserSeeder extends Seeder
         // Check if superuser already exists to avoid duplication
         if (!User::where('email', 'admin@example.com')->exists()) {
             User::create([
-                'name' => 'Micomar Luigi C. Bala',
-                'email' => 'mcbala@up.edu.ph',
+                'name' => 'Super Admin',
+                'email' => 'up-accountability-admin@admin.com',
                 'password' => Hash::make('administrator_na_pogi'), // Change this to a secure password
                 'email_verified_at' => now(),
             ]);
