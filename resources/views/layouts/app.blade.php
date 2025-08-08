@@ -244,10 +244,15 @@
     @endif
 
 
-    {{-- <footer>
-        <div class="container text-center " >
-            <p class=" text-muted">&copy; {{ date('Y') }} UP ITDC Accountability Form Management System. All rights reserved.</p>
+    <footer class="text-center mt-5 py-3 border-top">
+        <div class="container">
+            <p class="mb-1 text-maroon fw-semibold">
+                &copy; {{ date('Y') }} UPITDC Accountability Form Management System
+            </p>
+            <p class="mb-0 text-muted small">
+                Developer: Justine Carl P. Mantua - Mabini Colleges Inc. 2025
+            </p>
         </div>
-    </footer> --}}
+    </footer>
 </body>
 </html>

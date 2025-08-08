@@ -93,8 +93,4 @@
     {{ $paginator->withQueryString()->links('vendor.pagination.bootstrap-5') }}
 </div>
 
-{{-- Pagination --}}
-<div class="mt-4">
-    {{-- {!! $paginator->withQueryString()->('vendor.pagination.bootstrap-5') !!} --}}
-    {{ $paginator->withQueryString()->links('vendor.pagination.bootstrap-5') }}
 </div>
